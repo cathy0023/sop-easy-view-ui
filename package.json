@@ -1,0 +1,51 @@
+{
+  "name": "megaview-ui",
+  "version": "0.0.1",
+  "description": "深维会话纪要可视化组件库 - 基于 Web Components",
+  "type": "module",
+  "main": "./dist/megaview-ui.umd.js",
+  "module": "./dist/megaview-ui.es.js",
+  "browser": "./dist/megaview-ui.iife.js",
+  "exports": {
+    ".": {
+      "import": "./dist/megaview-ui.es.js",
+      "require": "./dist/megaview-ui.umd.js",
+      "browser": "./dist/megaview-ui.iife.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "DEPLOYMENT.md"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "web-components",
+    "conversation",
+    "summary",
+    "visualization",
+    "megaview",
+    "cdn"
+  ],
+  "author": "Megaview",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/megaview/MegaviewUI.git"
+  },
+  "homepage": "https://github.com/megaview/MegaviewUI#readme",
+  "bugs": {
+    "url": "https://github.com/megaview/MegaviewUI/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

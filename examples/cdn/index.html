@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MegaviewUI - CDN 使用示例</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .demo-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .demo-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #4461ec;
+    }
+    code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>MegaviewUI CDN 使用示例</h1>
+
+    <div class="demo-section">
+      <div class="demo-title">方式一：ES Module（推荐，现代浏览器）</div>
+      <pre><code>&lt;script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.es.js"&gt;&lt;/script&gt;</code></pre>
+      <p>适用于：现代浏览器、构建工具（Vite、Webpack 等）</p>
+    </div>
+
+    <div class="demo-section">
+      <div class="demo-title">方式二：IIFE（直接引入）</div>
+      <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.iife.js"&gt;&lt;/script&gt;</code></pre>
+      <p>适用于：传统 HTML 项目，会创建全局变量 <code>MegaviewUI</code></p>
+    </div>
+
+    <div class="demo-section">
+      <div class="demo-title">方式三：UMD（通用模块定义）</div>
+      <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.umd.js"&gt;&lt;/script&gt;</code></pre>
+      <p>适用于：CommonJS、AMD 或浏览器全局变量</p>
+    </div>
+
+    <div class="demo-section">
+      <div class="demo-title">实际使用示例</div>
+      <pre><code>&lt;!-- 引入组件库 --&gt;
+&lt;script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.es.js"&gt;&lt;/script&gt;
+
+&lt;!-- 使用组件 --&gt;
+&lt;megaview-conversation-summary
+  data='{"summary_result":[{"question_name":"会话总结","answers":[{"content":"本次对话..."}]}]}'
+  width="100%"
+  height="600px"&gt;
+&lt;/megaview-conversation-summary&gt;</code></pre>
+    </div>
+
+    <div class="demo-section">
+      <div class="demo-title">完整示例</div>
+      <div id="demo-container"></div>
+    </div>
+  </div>
+
+  <!-- 方式一：使用 ES Module（当前示例） -->
+  <script type="module">
+    // 动态导入组件库
+    import('https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.es.js').then(() => {
+      // 组件已注册，可以直接使用
+      console.log('组件库加载成功');
+      
+      // 示例数据
+      const demoData = {
+        "conversation_id": 349488961,
+        "summary_status": 2,
+        "summary_result": [
+          {
+            "instruction_id": 968,
+            "question_name": "销售是否处理了客户的异议",
+            "answers": [
+              {
+                "content": "否，销售未处理客户的异议。",
+                "context": [
+                  {
+                    "begin_time": 1763207700,
+                    "content": "客户：我觉得价格有点高",
+                    "speaker_type": "customer",
+                    "speaker_name": "客户"
+                  },
+                  {
+                    "begin_time": 1763207800,
+                    "content": "销售：好的，我了解了",
+                    "speaker_type": "user",
+                    "speaker_name": "销售"
+                  }
+                ],
+                "reasoning_process": "客户在对话中明确表达了价格异议，但销售只是简单回应，未进行深入处理或提供解决方案。"
+              }
+            ]
+          },
+          {
+            "question_name": "会话总结",
+            "answers": [
+              {
+                "content": "本次对话为销售与客户的初次接触，主要讨论了产品功能和价格问题。"
+              }
+            ]
+          }
+        ]
+      };
+
+      // 创建组件元素
+      const component = document.createElement('megaview-conversation-summary');
+      component.setAttribute('data', JSON.stringify(demoData));
+      component.setAttribute('width', '100%');
+      component.setAttribute('height', '500px');
+
+      // 监听事件
+      component.addEventListener('section-expand', (e) => {
+        console.log('展开问题:', e.detail.questionIndex);
+      });
+
+      component.addEventListener('section-collapse', (e) => {
+        console.log('折叠问题:', e.detail.questionIndex);
+      });
+
+      // 添加到页面
+      document.getElementById('demo-container').appendChild(component);
+    }).catch(err => {
+      console.error('组件库加载失败:', err);
+      document.getElementById('demo-container').innerHTML = 
+        '<p style="color: red;">组件库加载失败，请检查网络连接或 CDN 地址。</p>';
+    });
+  </script>
+
+  <!-- 方式二：使用 IIFE（备用方案，注释掉） -->
+  <!--
+  <script src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.iife.js"></script>
+  <script>
+    // IIFE 版本会自动注册组件，可以直接使用
+    const demoData = {
+      "summary_result": [
+        {
+          "question_name": "会话总结",
+          "answers": [
+            {
+              "content": "本次对话为销售与客户的初次接触..."
+            }
+          ]
+        }
+      ]
+    };
+
+    const component = document.createElement('megaview-conversation-summary');
+    component.setAttribute('data', JSON.stringify(demoData));
+    document.getElementById('demo-container').appendChild(component);
+  </script>
+  -->
+</body>
+</html>
+

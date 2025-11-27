@@ -1,0 +1,12 @@
+{
+  "host": "cdn.yourdomain.com",
+  "path": "/megaview-ui",
+  "protocol": "https",
+  "upload": {
+    "method": "rsync",
+    "remote": "user@server:/path/to/cdn",
+    "options": ["-avz", "--delete"]
+  }
+}
+
+

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试 examples.json 数据</title>
+  <script type="module" src="./dist/megaview-ui.es.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: sans-serif;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>深维会话纪要组件 - examples.json 数据测试</h1>
+    
+    <megaview-conversation-summary id="summary"></megaview-conversation-summary>
+  </div>
+  
+  <script type="module">
+    // 加载 examples.json 数据
+    fetch('./docs/examples.json')
+      .then(response => response.json())
+      .then(data => {
+        const summary = document.getElementById('summary');
+        summary.setAttribute('data', JSON.stringify(data));
+        
+        // 监听事件
+        summary.addEventListener('section-expand', (e) => {
+          console.log('展开问题索引：', e.detail.questionIndex);
+        });
+        
+        summary.addEventListener('section-collapse', (e) => {
+          console.log('折叠问题索引：', e.detail.questionIndex);
+        });
+        
+        console.log('数据加载成功！', data);
+      })
+      .catch(error => {
+        console.error('加载数据失败：', error);
+      });
+  </script>
+</body>
+</html>
+
+
+
