@@ -25,9 +25,9 @@ try {
 # 检查包名是否可用
 Write-Host ""
 Write-Host "📋 步骤 2: 检查包名可用性..." -ForegroundColor Yellow
-$packageInfo = npm view @megaview/ui 2>&1
+$packageInfo = npm view megaview-ui 2>&1
 if ($LASTEXITCODE -eq 0) {
-    $currentVersion = (npm view @megaview/ui version 2>&1)
+    $currentVersion = (npm view megaview-ui version 2>&1)
     $packageJson = Get-Content package.json | ConvertFrom-Json
     $packageVersion = $packageJson.version
     
@@ -97,14 +97,15 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host ""
     Write-Host "✅ 发布成功！" -ForegroundColor Green
     Write-Host ""
-    Write-Host "📦 包地址: https://www.npmjs.com/package/@megaview/ui" -ForegroundColor Cyan
+    Write-Host "📦 包地址: https://www.npmjs.com/package/megaview-ui" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "💡 CDN 使用方式:" -ForegroundColor Yellow
-    Write-Host "   jsDelivr: https://cdn.jsdelivr.net/npm/@megaview/ui@$version/dist/megaview-ui.es.js" -ForegroundColor Cyan
-    Write-Host "   unpkg:    https://unpkg.com/@megaview/ui@$version/dist/megaview-ui.es.js" -ForegroundColor Cyan
+    Write-Host "   jsDelivr: https://cdn.jsdelivr.net/npm/megaview-ui@$version/dist/megaview-ui.es.js" -ForegroundColor Cyan
+    Write-Host "   unpkg:    https://unpkg.com/megaview-ui@$version/dist/megaview-ui.es.js" -ForegroundColor Cyan
 } else {
     Write-Host "❌ 发布失败" -ForegroundColor Red
     exit 1
 }
+
 
 

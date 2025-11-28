@@ -237,6 +237,7 @@ A: 组件会自动处理缺失的字段。必需字段只有 `summary_result` �
 
 ## 更多资源
 
-- [API 文档](./api.md)
-- [在线示例](../examples/)
-- [GitHub 仓库](#)
+- [API 文档](./api.md) - 完整的 API 参考文档
+- [项目结构说明](./structure.md) - 了解项目目录组织方式
+- [在线示例](../examples/) - 查看不同框架的集成示例
+- [GitHub 仓库](https://github.com/megaview/MegaviewUI)

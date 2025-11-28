@@ -297,3 +297,10 @@ element.updateData({
 ### 时间显示
 
 组件会自动将时间戳转换为 `HH:MM` 格式显示在上下文内容上方。
+
+## 更多资源
+
+- [集成指南](./integration.md) - 了解如何在 React、Vue、原生 HTML 中集成组件
+- [项目结构说明](./structure.md) - 了解项目目录组织方式
+- [在线示例](../examples/) - 查看不同框架的集成示例
+- [GitHub 仓库](https://github.com/megaview/MegaviewUI)

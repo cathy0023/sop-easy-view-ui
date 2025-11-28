@@ -1,6 +1,27 @@
 # 深维会话纪要组件库
 
-基于 Web Components 的框架无关可视化组件库。
+基于 Web Components 的框架无关可视化组件库，用于展示会话纪要信息。
+
+## 特性
+
+- ✨ **框架无关**: 可在 React、Vue、Angular 或原生 HTML 中使用
+- 🎨 **纯 UI 组件**: 数据由客户传入，职责清晰
+- 🚀 **零依赖**: 不依赖任何第三方库，体积小，加载快
+- 🔒 **样式隔离**: Shadow DOM 确保样式不冲突
+- 📦 **多种格式**: 支持 ESM、UMD、IIFE 多种模块格式
+- 🧱 **现代技术栈**：采用 Lit + TypeScript 构建，同时集成 Storybook、Web Test Runner 与 Semantic Release
+
+## 技术栈与辅助工具
+
+| 能力 | 说明 |
+| --- | --- |
+| 渲染层 | [Lit 3](https://lit.dev/) + 自定义元素，天然支持 Shadow DOM |
+| 语言支持 | TypeScript 提供完整类型定义（`dist/types`） |
+| 文档开发 | Storybook 10（`npm run storybook`） |
+| 自动化测试 | Web Test Runner + @open-wc/testing |
+| 自动发布 | Semantic Release + GitHub Actions（约定式提交） |
+
+> 💡 提交格式遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范，例如 `feat: 新增交互事件`、`fix: 修复宽度计算`。
 
 ## 安装
 
@@ -15,11 +36,8 @@ npm install megaview-ui
 安装后，在代码中引入：
 
 ```javascript
-// ES Module - 推荐方式（自动注册组件）
+// ES Module
 import 'megaview-ui';
-
-// 或者按需导入组件类（用于类型约束或实例方法调用）
-import { MegaviewConversationSummary } from 'megaview-ui';
 
 // CommonJS
 require('megaview-ui');
@@ -49,14 +67,19 @@ require('megaview-ui');
 <script src="https://unpkg.com/megaview-ui@1.0.0/dist/megaview-ui.iife.js"></script>
 ```
 
+#### 自定义 CDN
+
+如果部署到自己的 CDN 服务器：
+
+```html
+<!-- ES Module 版本 -->
+<script type="module" src="https://cdn.yourdomain.com/megaview-ui/1.0.0/megaview-ui.es.js"></script>
+
+<!-- IIFE 版本 -->
+<script src="https://cdn.yourdomain.com/megaview-ui/1.0.0/megaview-ui.iife.js"></script>
+```
+
 > 💡 **提示**：更多 CDN 部署信息请参考 [DEPLOYMENT.md](./DEPLOYMENT.md)
-
-#### 关于导入方式的说明
-
-- **全局导入（推荐）** `import 'megaview-ui'`：在应用入口处导入一次，自动注册所有自定义元素，后续可在任何组件中使用 `<megaview-conversation-summary>`
-- **具名导入（可选）** `import { MegaviewConversationSummary }`：用于 TypeScript 类型约束，在需要类型检查的组件中单独导入
-- **组合使用**：通常在应用入口全局导入一次，然后在具体组件中按需导入类型
-- **不支持** `import { megaview-conversation-summary }`：JavaScript 标识符不能包含连字符，请使用驼峰命名的 `MegaviewConversationSummary`
 
 ## 快速开始
 
@@ -108,21 +131,27 @@ require('megaview-ui');
 npm install megaview-ui
 ```
 
-然后在应用入口（main.js 或 App.js）全局导入：
-
-```javascript
-// src/main.js 或 src/App.js
-import 'megaview-ui'; // 全局注册组件
-```
-
-在具体组件中使用：
+然后在代码中使用：
 
 ```jsx
-import { MegaviewConversationSummary } from 'megaview-ui'; // 仅用于类型约束
+import 'megaview-ui';
 import { useRef, useEffect } from 'react';
 
-function ConversationSummary({ conversationData }) {
-  const summaryRef = useRef<MegaviewConversationSummary>(null);
+function App() {
+  const summaryRef = useRef(null);
+
+  const conversationData = {
+    summary_result: [
+      {
+        question_name: "会话总结",
+        answers: [
+          {
+            content: "本次对话为销售与客户的初次接触..."
+          }
+        ]
+      }
+    ]
+  };
 
   useEffect(() => {
     const element = summaryRef.current;
@@ -155,29 +184,19 @@ function ConversationSummary({ conversationData }) {
 npm install megaview-ui
 ```
 
-然后在应用入口（main.js）全局导入：
-
-```javascript
-// src/main.js
-import 'megaview-ui'; // 全局注册组件
-```
-
-在具体组件中使用：
+然后在代码中使用：
 
 ```vue
 <template>
   <megaview-conversation-summary
-    ref="summaryRef"
     :data="dataJson"
     @section-expand="handleExpand"
   />
 </template>
 
 <script setup>
-import { MegaviewConversationSummary } from 'megaview-ui'; // 仅用于类型约束
+import 'megaview-ui';
 import { ref, computed } from 'vue';
-
-const summaryRef = ref<MegaviewConversationSummary>();
 
 const conversationData = ref({
   summary_result: [
@@ -250,12 +269,67 @@ const handleExpand = (event) => {
 |--------|------|------|
 | `updateData(data)` | 更新数据 | `data: object` |
 
+## 开发
+
+```bash
+# 安装依赖
+npm install
+
+# 启动开发服务器（Vite）
+npm run dev
+
+# 构建生产版本
+npm run build
+
+# 预览构建结果
+npm run preview
+
+# 运行单元测试（Web Test Runner）
+npm run test
+
+# 打开 Storybook 进行组件调试与文档编写
+npm run storybook
+
+# 仅运行类型检查（不输出文件）
+npm run typecheck
+```
+
+### 自动发布流程
+
+项目已配置 Semantic Release + GitHub Actions，当向 `main` 分支提交符合规范的 commit 时会自动：
+
+1. 运行 `npm run typecheck`、`npm run test`、`npm run build`
+2. 生成更新日志并发布 npm 包
+3. 创建 GitHub Release、更新 `CHANGELOG.md`
+
+本地需要手动发布时也可以执行：
+
+```bash
+# 使用本地环境模拟一次发布（会根据 commit 自动计算版本号）
+npm run release
+```
+
+发布前请确保已在环境变量中配置 `NPM_TOKEN`（发布 npm）与 `GITHUB_TOKEN`（推送 Release）。
+
+## 浏览器支持
+
+- Chrome >= 54
+- Firefox >= 63
+- Safari >= 10.1
+- Edge >= 79
 
 ## 文档
 
-- [完整文档](./docs/readme-full.md) - 完整的项目介绍和开发指南
 - [API 文档](./docs/api.md) - 完整的 API 参考文档
 - [集成指南](./docs/integration.md) - 框架集成教程
 - [项目结构说明](./docs/structure.md) - 了解项目目录组织方式
 - [示例数据](./docs/examples.json) - 完整的数据格式示例
+
+## 许可证
+
+MIT
+
+## 联系我们
+
+如有问题或建议，请联系深维智信技术支持团队。
 

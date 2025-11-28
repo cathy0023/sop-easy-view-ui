@@ -23,8 +23,8 @@ fi
 # 检查包名是否可用
 echo ""
 echo "📋 步骤 2: 检查包名可用性..."
-if npm view @megaview/ui > /dev/null 2>&1; then
-    CURRENT_VERSION=$(npm view @megaview/ui version 2>/dev/null || echo "未知")
+if npm view megaview-ui > /dev/null 2>&1; then
+    CURRENT_VERSION=$(npm view megaview-ui version 2>/dev/null || echo "未知")
     PACKAGE_VERSION=$(node -p "require('./package.json').version")
     echo "⚠️  包已存在，当前版本: $CURRENT_VERSION"
     echo "📦 本地版本: $PACKAGE_VERSION"
@@ -75,10 +75,11 @@ npm publish --access public
 echo ""
 echo "✅ 发布成功！"
 echo ""
-echo "📦 包地址: https://www.npmjs.com/package/@megaview/ui"
+echo "📦 包地址: https://www.npmjs.com/package/megaview-ui"
 echo ""
 echo "💡 CDN 使用方式:"
-echo "   jsDelivr: https://cdn.jsdelivr.net/npm/@megaview/ui@$(node -p "require('./package.json').version")/dist/megaview-ui.es.js"
-echo "   unpkg:    https://unpkg.com/@megaview/ui@$(node -p "require('./package.json').version")/dist/megaview-ui.es.js"
+echo "   jsDelivr: https://cdn.jsdelivr.net/npm/megaview-ui@$(node -p "require('./package.json').version")/dist/megaview-ui.es.js"
+echo "   unpkg:    https://unpkg.com/megaview-ui@$(node -p "require('./package.json').version")/dist/megaview-ui.es.js"
+
 
 
