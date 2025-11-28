@@ -1,6 +1,6 @@
 {
   "name": "megaview-ui",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "深维会话纪要可视化组件库 - 基于 Web Components",
   "type": "module",
   "main": "./dist/megaview-ui.umd.js",
