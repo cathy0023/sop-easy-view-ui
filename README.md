@@ -33,20 +33,20 @@ require('megaview-ui');
 
 ```html
 <!-- ES Module 版本（推荐，现代浏览器） -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.es.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@0.0.2/dist/megaview-ui.es.js"></script>
 
 <!-- IIFE 版本（传统浏览器，无需模块系统） -->
-<script src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/megaview-ui@0.0.2/dist/megaview-ui.iife.js"></script>
 ```
 
 #### unpkg CDN
 
 ```html
 <!-- ES Module 版本 -->
-<script type="module" src="https://unpkg.com/megaview-ui@1.0.0/dist/megaview-ui.es.js"></script>
+<script type="module" src="https://unpkg.com/megaview-ui@0.0.2/dist/megaview-ui.es.js"></script>
 
 <!-- IIFE 版本 -->
-<script src="https://unpkg.com/megaview-ui@1.0.0/dist/megaview-ui.iife.js"></script>
+<script src="https://unpkg.com/megaview-ui@0.0.2/dist/megaview-ui.iife.js"></script>
 ```
 
 > 💡 **提示**：更多 CDN 部署信息请参考 [DEPLOYMENT.md](./DEPLOYMENT.md)
@@ -87,7 +87,7 @@ require('megaview-ui');
 <html>
 <head>
   <!-- 引入组件库 -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.es.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@0.0.2/dist/megaview-ui.es.js"></script>
 </head>
 <body>
   <!-- 使用组件 -->

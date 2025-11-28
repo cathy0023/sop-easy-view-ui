@@ -102,7 +102,6 @@ export const conversationSummaryStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: rotate(90deg);
   }
 
   .collapse-icon.collapsed {
@@ -137,7 +136,7 @@ export const conversationSummaryStyles = css`
     font-size: 12px;
     font-weight: 600;
     color: var(--megaview-conversation-text-secondary, #666666);
-    margin-bottom: 12px;
+    margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -172,7 +171,6 @@ export const conversationSummaryStyles = css`
 
   .context-text {
     color: inherit;
-    white-space: pre-wrap;
     word-break: break-word;
     line-height: 1.7;
   }
@@ -185,7 +183,7 @@ export const conversationSummaryStyles = css`
     font-size: 12px;
     font-weight: 600;
     color: var(--megaview-conversation-text-secondary, #666666);
-    margin-bottom: 12px;
+    margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -198,7 +196,6 @@ export const conversationSummaryStyles = css`
     font-size: 13px;
     line-height: 1.7;
     color: inherit;
-    white-space: pre-wrap;
     word-break: break-word;
   }
 

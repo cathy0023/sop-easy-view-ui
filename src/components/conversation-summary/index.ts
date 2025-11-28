@@ -1,22 +1,32 @@
-import { LitElement, html, nothing, type PropertyValueMap, type TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
-import { repeat } from 'lit/directives/repeat.js';
-import { conversationSummaryStyles } from './conversation-summary.styles';
-import { emitComponentEvent, syncHostSizeVariables } from '../../utils/dom';
-import { escapeHtml, formatTimeFromSeconds, splitMultilineText } from '../../utils/format';
+import {
+  LitElement,
+  html,
+  nothing,
+  type PropertyValueMap,
+  type TemplateResult,
+} from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { repeat } from "lit/directives/repeat.js";
+import { conversationSummaryStyles } from "./conversation-summary.styles";
+import { emitComponentEvent, syncHostSizeVariables } from "../../utils/dom";
+import {
+  escapeHtml,
+  formatTimeFromSeconds,
+  splitMultilineText,
+} from "../../utils/format";
 import type {
   ConversationAnswer,
   ConversationQuestionBlock,
   ConversationSummaryData,
-  SectionToggleDetail
-} from './types';
-import { CONVERSATION_EVENTS } from './types';
+  SectionToggleDetail,
+} from "./types";
+import { CONVERSATION_EVENTS } from "./types";
 
 /** 默认宽度与高度常量，便于在多个方法中复用 */
 const DEFAULT_DIMENSIONS = {
-  width: '100%',
-  height: 'auto'
+  width: "100%",
+  height: "auto",
 } as const;
 
 /**
@@ -25,19 +35,21 @@ const DEFAULT_DIMENSIONS = {
  * @param value - 来自 HTML 属性的原始字符串
  * @returns 结构化的会话数据对象，如果解析失败则返回 null
  */
-const parseDataAttribute = (value: string | null): ConversationSummaryData | null => {
+const parseDataAttribute = (
+  value: string | null
+): ConversationSummaryData | null => {
   if (!value) return null;
   try {
     const parsed = JSON.parse(value) as ConversationSummaryData;
-    return parsed && typeof parsed === 'object' ? parsed : null;
+    return parsed && typeof parsed === "object" ? parsed : null;
   } catch (error) {
     // 这里仍然保持 console.error，便于排查错误数据
-    console.error('Invalid data JSON:', error);
+    console.error("Invalid data JSON:", error);
     return null;
   }
 };
 
-@customElement('megaview-conversation-summary')
+@customElement("megaview-conversation-summary")
 /**
  * 会话纪要组件（Lit 版本）
  *
@@ -66,11 +78,11 @@ export default class MegaviewConversationSummary extends LitElement {
    * - 同时支持直接赋值为对象（`element.data = {...}`）
    */
   @property({
-    attribute: 'data',
+    attribute: "data",
     converter: {
-      fromAttribute: value => parseDataAttribute(value),
-      toAttribute: () => null // 避免对象被序列化回字符串
-    }
+      fromAttribute: (value) => parseDataAttribute(value),
+      toAttribute: () => null, // 避免对象被序列化回字符串
+    },
   })
   public data: ConversationSummaryData | null = null;
 
@@ -133,11 +145,11 @@ export default class MegaviewConversationSummary extends LitElement {
    * @param changedProps - 被 Lit 追踪的变更集合
    */
   protected override updated(changedProps: PropertyValueMap<this>): void {
-    if (changedProps.has('width') || changedProps.has('height')) {
+    if (changedProps.has("width") || changedProps.has("height")) {
       this.syncHostDimensions();
     }
 
-    if (changedProps.has('data')) {
+    if (changedProps.has("data")) {
       // 当数据变化时重置展开状态，避免展开索引与新数据不匹配
       this.expandedQuestions.clear();
     }
@@ -151,7 +163,7 @@ export default class MegaviewConversationSummary extends LitElement {
    *   element.updateData({ summary_result: [] });
    */
   public updateData(payload: ConversationSummaryData | string): void {
-    if (typeof payload === 'string') {
+    if (typeof payload === "string") {
       this.data = parseDataAttribute(payload);
       return;
     }
@@ -187,7 +199,9 @@ export default class MegaviewConversationSummary extends LitElement {
    * 计算当前有效的 summary_result 列表
    */
   private get summaryItems(): ConversationQuestionBlock[] {
-    return Array.isArray(this.data?.summary_result) ? this.data?.summary_result ?? [] : [];
+    return Array.isArray(this.data?.summary_result)
+      ? this.data?.summary_result ?? []
+      : [];
   }
 
   /**
@@ -218,39 +232,65 @@ export default class MegaviewConversationSummary extends LitElement {
    * @param item - 问题数据
    * @param index - 对应的索引
    */
-  private renderQuestionItem(item: ConversationQuestionBlock, index: number): TemplateResult {
+  private renderQuestionItem(
+    item: ConversationQuestionBlock,
+    index: number
+  ): TemplateResult {
     const answers = item.answers ?? [];
-    const hasExpandableDetails = answers.some(answer => this.answerHasDetails(answer));
+    const hasExpandableDetails = answers.some((answer) =>
+      this.answerHasDetails(answer)
+    );
     const isExpanded = this.expandedQuestions.has(index);
 
     const headerClasses = classMap({
-      'question-header': true,
-      'has-details': hasExpandableDetails,
-      'no-details': !hasExpandableDetails
+      "question-header": true,
+      "has-details": hasExpandableDetails,
+      "no-details": !hasExpandableDetails,
     });
 
     const toggleHandlers = {
       click: () => this.handleHeaderToggle(index, hasExpandableDetails),
-      keydown: (event: KeyboardEvent) => this.handleHeaderKeydown(event, index, hasExpandableDetails)
+      keydown: (event: KeyboardEvent) =>
+        this.handleHeaderKeydown(event, index, hasExpandableDetails),
     };
 
     return html`
       <div class="question-item">
         <div
           class=${headerClasses}
-          role=${hasExpandableDetails ? 'button' : 'heading'}
+          role=${hasExpandableDetails ? "button" : "heading"}
           tabindex=${hasExpandableDetails ? 0 : -1}
           aria-expanded=${hasExpandableDetails ? String(isExpanded) : nothing}
           @click=${toggleHandlers.click}
           @keydown=${toggleHandlers.keydown}
         >
-          <span class="question-name">${escapeHtml(item.question_name ?? '')}</span>
+          <span class="question-name"
+            >${escapeHtml(item.question_name ?? "")}</span
+          >
           ${hasExpandableDetails
             ? html`
-                <span class=${classMap({
-                  'collapse-icon': true,
-                  collapsed: !isExpanded
-                })}> > </span>
+                <span
+                  class=${classMap({
+                    "collapse-icon": true,
+                    collapsed: !isExpanded,
+                  })}
+                >
+                  <svg
+                    t="1764296133904"
+                    class="icon"
+                    viewBox="0 0 1024 1024"
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    p-id="25320"
+                    width="200"
+                    height="200"
+                  >
+                    <path
+                      d="M758.624 630.624a32 32 0 0 1-45.248 0L512 429.248l-201.376 201.376a32 32 0 0 1-45.248-45.248l224-224a32 32 0 0 1 45.248 0l224 224a32 32 0 0 1 0 45.248z"
+                      p-id="25321"
+                    ></path>
+                  </svg>
+                </span>
               `
             : nothing}
         </div>
@@ -267,9 +307,13 @@ export default class MegaviewConversationSummary extends LitElement {
   private renderSimpleContent(answers: ConversationAnswer[]): TemplateResult {
     return html`
       <div class="question-content">
-        ${answers.map(answer => html`
-          <div class="answer-content">${this.renderMultilineText(answer.content)}</div>
-        `)}
+        ${answers.map(
+          (answer) => html`
+            <div class="answer-content">
+              ${this.renderMultilineText(answer.content)}
+            </div>
+          `
+        )}
       </div>
     `;
   }
@@ -280,16 +324,17 @@ export default class MegaviewConversationSummary extends LitElement {
    * @param answers - 当前问题的答案列表
    * @param isExpanded - 面板是否展开
    */
-  private renderQuestionDetails(answers: ConversationAnswer[], isExpanded: boolean): TemplateResult {
+  private renderQuestionDetails(
+    answers: ConversationAnswer[],
+    isExpanded: boolean
+  ): TemplateResult {
     if (!isExpanded) {
       return html`<div class="question-content collapsed"></div>`;
     }
 
     return html`
       <div class="question-content">
-        ${answers.map(answer => html`
-          ${this.renderAnswerContent(answer)}
-        `)}
+        ${answers.map((answer) => html` ${this.renderAnswerContent(answer)} `)}
       </div>
     `;
   }
@@ -301,7 +346,9 @@ export default class MegaviewConversationSummary extends LitElement {
     const contextList = answer.context ?? [];
     return html`
       ${answer.content
-        ? html`<div class="answer-content">${this.renderMultilineText(answer.content)}</div>`
+        ? html`<div class="answer-content">
+            ${this.renderMultilineText(answer.content)}
+          </div>`
         : nothing}
       ${contextList.length > 0
         ? html`
@@ -310,19 +357,31 @@ export default class MegaviewConversationSummary extends LitElement {
               ${repeat(
                 contextList,
                 (_, idx) => `${idx}`,
-                ctx => html`
+                (ctx) => html`
                   <div class="context-item">
-                    ${(ctx.begin_time || ctx.speaker_name)
+                    ${ctx.begin_time || ctx.speaker_type
                       ? html`
                           <div class="context-meta">
-                            ${ctx.begin_time ? html`<span>${formatTimeFromSeconds(ctx.begin_time)}</span>` : nothing}
-                            ${ctx.speaker_name || ctx.speaker_type
-                              ? html`<span class="speaker-type">${escapeHtml(ctx.speaker_name ?? ctx.speaker_type ?? '')}</span>`
+                            ${ctx.begin_time
+                              ? html`<span
+                                  >${formatTimeFromSeconds(
+                                    ctx.begin_time
+                                  )}</span
+                                >`
+                              : nothing}
+                            ${ctx.speaker_type || ctx.speaker_type
+                              ? html`<span class="speaker-type"
+                                  >${escapeHtml(
+                                    ctx.speaker_type === 'customer' ? '客户' : '销售'
+                                  )}</span
+                                >`
                               : nothing}
                           </div>
                         `
                       : nothing}
-                    <div class="context-text">${this.renderMultilineText(ctx.content)}</div>
+                    <div class="context-text">
+                      ${this.renderMultilineText(ctx.content)}
+                    </div>
                   </div>
                 `
               )}
@@ -333,7 +392,9 @@ export default class MegaviewConversationSummary extends LitElement {
         ? html`
             <div class="reasoning-section">
               <div class="reasoning-title">推理</div>
-              <div class="reasoning-content">${this.renderMultilineText(answer.reasoning_process)}</div>
+              <div class="reasoning-content">
+                ${this.renderMultilineText(answer.reasoning_process)}
+              </div>
             </div>
           `
         : nothing}
@@ -346,7 +407,9 @@ export default class MegaviewConversationSummary extends LitElement {
   private renderMultilineText(value?: string): TemplateResult | typeof nothing {
     if (!value) return nothing;
     const segments = splitMultilineText(value);
-    return html`${segments.map((segment, index) => html`${index > 0 ? html`<br />` : nothing}${segment}`)}`;
+    return html`${segments.map(
+      (segment, index) => html`${index > 0 ? html`<br />` : nothing}${segment}`
+    )}`;
   }
 
   /**
@@ -355,7 +418,7 @@ export default class MegaviewConversationSummary extends LitElement {
   private answerHasDetails(answer: ConversationAnswer): boolean {
     return Boolean(
       (answer.context && answer.context.length > 0) ||
-      (answer.reasoning_process && answer.reasoning_process.trim().length > 0)
+        (answer.reasoning_process && answer.reasoning_process.trim().length > 0)
     );
   }
 
@@ -366,7 +429,9 @@ export default class MegaviewConversationSummary extends LitElement {
     if (!expandable) return;
     const nextSet = new Set(this.expandedQuestions);
     const isCurrentlyExpanded = nextSet.has(index);
-    const eventName = isCurrentlyExpanded ? CONVERSATION_EVENTS.collapse : CONVERSATION_EVENTS.expand;
+    const eventName = isCurrentlyExpanded
+      ? CONVERSATION_EVENTS.collapse
+      : CONVERSATION_EVENTS.expand;
 
     if (isCurrentlyExpanded) {
       nextSet.delete(index);
@@ -382,9 +447,13 @@ export default class MegaviewConversationSummary extends LitElement {
   /**
    * 键盘辅助：监听 Enter/Space 保证可访问性
    */
-  private handleHeaderKeydown(event: KeyboardEvent, index: number, expandable: boolean): void {
+  private handleHeaderKeydown(
+    event: KeyboardEvent,
+    index: number,
+    expandable: boolean
+  ): void {
     if (!expandable) return;
-    const keys = ['Enter', ' '];
+    const keys = ["Enter", " "];
     if (keys.includes(event.key)) {
       event.preventDefault();
       this.handleHeaderToggle(index, expandable);
@@ -395,7 +464,8 @@ export default class MegaviewConversationSummary extends LitElement {
    * 自定义事件派发的统一封装
    */
   private dispatchToggleEvent(eventName: string, index: number): void {
-    emitComponentEvent<SectionToggleDetail>(this, eventName, { questionIndex: index });
+    emitComponentEvent<SectionToggleDetail>(this, eventName, {
+      questionIndex: index,
+    });
   }
 }
-
