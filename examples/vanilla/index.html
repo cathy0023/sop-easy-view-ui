@@ -29,6 +29,9 @@
   
   <div class="controls">
     <button onclick="updateData()">更新数据</button>
+    <button onclick="switchToOrangeTheme()">橙色主题</button>
+    <button onclick="switchToGreenTheme()">绿色主题</button>
+    <button onclick="switchToDefaultTheme()">默认主题</button>
   </div>
   
   <megaview-conversation-summary
@@ -132,6 +135,41 @@
         ]
       };
       summary.updateData(newData);
+    }
+
+    // 主题切换函数
+    function switchToOrangeTheme() {
+      document.documentElement.style.setProperty('--megaview-color-primary', '#ff6b35');
+      document.documentElement.style.setProperty('--megaview-color-primary-bg', 'rgba(255, 107, 53, 0.1)');
+      document.documentElement.style.setProperty('--megaview-color-text', '#2d3748');
+      document.documentElement.style.setProperty('--megaview-color-text-secondary', '#4a5568');
+      document.documentElement.style.setProperty('--megaview-color-bg', '#f8f9fa');
+      document.documentElement.style.setProperty('--megaview-color-surface', '#ffffff');
+      document.documentElement.style.setProperty('--megaview-color-border', '#e2e8f0');
+      document.documentElement.style.setProperty('--megaview-color-hover', '#edf2f7');
+    }
+
+    function switchToGreenTheme() {
+      document.documentElement.style.setProperty('--megaview-color-primary', '#10b981');
+      document.documentElement.style.setProperty('--megaview-color-primary-bg', 'rgba(16, 185, 129, 0.1)');
+      document.documentElement.style.setProperty('--megaview-color-text', '#1f2937');
+      document.documentElement.style.setProperty('--megaview-color-text-secondary', '#374151');
+      document.documentElement.style.setProperty('--megaview-color-bg', '#f0fdf4');
+      document.documentElement.style.setProperty('--megaview-color-surface', '#ffffff');
+      document.documentElement.style.setProperty('--megaview-color-border', '#d1fae5');
+      document.documentElement.style.setProperty('--megaview-color-hover', '#ecfdf5');
+    }
+
+    function switchToDefaultTheme() {
+      // 重置为默认值
+      document.documentElement.style.removeProperty('--megaview-color-primary');
+      document.documentElement.style.removeProperty('--megaview-color-primary-bg');
+      document.documentElement.style.removeProperty('--megaview-color-text');
+      document.documentElement.style.removeProperty('--megaview-color-text-secondary');
+      document.documentElement.style.removeProperty('--megaview-color-bg');
+      document.documentElement.style.removeProperty('--megaview-color-surface');
+      document.documentElement.style.removeProperty('--megaview-color-border');
+      document.documentElement.style.removeProperty('--megaview-color-hover');
     }
   </script>
 </body>
