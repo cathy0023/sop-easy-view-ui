@@ -22,6 +22,8 @@ export const conversationSummaryStyles = css`
     font-size: 14px;
     line-height: 1.6;
     color: var(--megaview-color-text, var(--megaview-conversation-text, #333333));
+    /* 将滚动移到根组件上，避免在某些场景下出现双滚动条或无法滚动的问题 */
+    overflow-y: auto;
   }
 
   :host([hidden]) {
@@ -29,17 +31,13 @@ export const conversationSummaryStyles = css`
   }
 
   .container {
-    background: var(--megaview-color-bg, var(--megaview-conversation-bg, #f5f5f5));
-    padding: 20px;
     height: 100%;
     box-sizing: border-box;
   }
 
   .card {
-    height: calc(100% - 48px);
-    overflow-y: auto;
+    /* 移除 overflow-y: auto，将滚动控制权交给根组件 */
     background: var(--megaview-color-surface, var(--megaview-conversation-card-bg, #ffffff));
-    border: 1px solid var(--megaview-color-border, var(--megaview-conversation-border, #e0e0e0));
     border-radius: 8px;
     padding: 24px;
     margin-bottom: 16px;
