@@ -1,8 +1,5 @@
 <template>
-  <div class="container">
-    <h1>深维会话纪要组件 - Vue 示例</h1>
-    <p class="subtitle">基于 Web Components 的框架无关可视化组件库</p>
-
+  <div class="conversation-summary-tab">
     <div class="controls">
       <button @click="handleUpdateData">更新数据</button>
     </div>
@@ -16,14 +13,17 @@
 
 <script setup>
 import "megaview-ui";
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 
+// 会话纪要组件引用
 const summaryRef = ref(null);
 
+// 会话数据
 const conversationData = ref({});
 
+// 初始化数据
 onMounted(() => {
-  console.log("Vue data:", conversationData.value);
+  console.log("ConversationSummaryTab mounted");
   console.log("Component ref:", summaryRef.value);
   if (summaryRef.value) {
     setTimeout(() => {
@@ -96,15 +96,16 @@ onMounted(() => {
 
 // 监听数据变化，更新组件
 watch(conversationData, (newData) => {
-  console.log('Watch data:', newData);
+  console.log('ConversationSummaryTab data changed:', newData);
   if (summaryRef.value) {
     // 深拷贝去掉响应式包装，传递普通对象给组件
-    summaryRef.value.updateData(newData);
+    summaryRef.value.setData(newData);
   }
 }, { deep: true });
 
+// 更新数据处理函数
 const handleUpdateData = () => {
-  console.log("handleUpdateData called, updating conversationData");
+  console.log("handleUpdateData called in ConversationSummaryTab, updating conversationData");
   conversationData.value = {
     ...conversationData.value,
     summary_result: [
@@ -128,3 +129,28 @@ const handleUpdateData = () => {
   console.log("conversationData updated:", conversationData.value);
 };
 </script>
+
+<style scoped>
+.conversation-summary-tab {
+  /* 会话纪要 tab 的特定样式 */
+}
+
+.controls {
+  margin-bottom: 20px;
+}
+
+.controls button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.controls button:hover {
+  background-color: #0056b3;
+}
+</style>
+

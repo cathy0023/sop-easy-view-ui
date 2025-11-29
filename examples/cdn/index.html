@@ -138,18 +138,12 @@
 
       // 创建组件元素
       const component = document.createElement('megaview-conversation-summary');
-      component.setAttribute('data', JSON.stringify(demoData));
       component.setAttribute('width', '100%');
       component.setAttribute('height', '500px');
 
-      // 监听事件
-      component.addEventListener('section-expand', (e) => {
-        console.log('展开问题:', e.detail.questionIndex);
-      });
+      // 使用 JavaScript API 设置数据（推荐）
+      component.data = demoData;
 
-      component.addEventListener('section-collapse', (e) => {
-        console.log('折叠问题:', e.detail.questionIndex);
-      });
 
       // 添加到页面
       document.getElementById('demo-container').appendChild(component);

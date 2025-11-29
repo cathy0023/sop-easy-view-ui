@@ -71,24 +71,6 @@ export interface ConversationSummaryData {
   summary_result?: ConversationQuestionBlock[];
 }
 
-/**
- * 组件暴露的自定义事件详细信息
- *
- * @property questionIndex - 被展开或折叠的问题索引
- */
-export interface SectionToggleDetail {
-  questionIndex: number;
-}
-
-/**
- * 自定义事件名称常量，避免魔法字符串
- */
-export const CONVERSATION_EVENTS = {
-  expand: 'section-expand',
-  collapse: 'section-collapse'
-} as const;
-
-export type ConversationEventName = typeof CONVERSATION_EVENTS[keyof typeof CONVERSATION_EVENTS];
 
 
 

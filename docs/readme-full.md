@@ -155,22 +155,19 @@ function App() {
 
   useEffect(() => {
     const element = summaryRef.current;
-
-    const handleExpand = (e) => {
-      console.log('展开:', e.detail.questionIndex);
-    };
-
-    element?.addEventListener('section-expand', handleExpand);
-
-    return () => {
-      element?.removeEventListener('section-expand', handleExpand);
-    };
-  }, []);
+    if (element) {
+      // 使用 JavaScript API 设置数据（推荐）
+      element.data = conversationData;
+      // 或者使用 setData 方法
+      // element.setData(conversationData);
+    }
+  }, [conversationData]);
 
   return (
     <megaview-conversation-summary
       ref={summaryRef}
-      data={JSON.stringify(conversationData)}
+      width="100%"
+      height="600px"
     />
   );
 }
@@ -189,14 +186,15 @@ npm install megaview-ui
 ```vue
 <template>
   <megaview-conversation-summary
-    :data="dataJson"
-    @section-expand="handleExpand"
+    ref="summaryRef"
+    width="100%"
+    height="600px"
   />
 </template>
 
 <script setup>
 import 'megaview-ui';
-import { ref, computed } from 'vue';
+import { ref, watch } from 'vue';
 
 const conversationData = ref({
   summary_result: [
@@ -211,11 +209,14 @@ const conversationData = ref({
   ]
 });
 
-const dataJson = computed(() => JSON.stringify(conversationData.value));
-
-const handleExpand = (event) => {
-  console.log('展开:', event.detail.questionIndex);
-};
+// 使用 JavaScript API 设置数据（推荐）
+watch(conversationData, (newData) => {
+  if (summaryRef.value) {
+    summaryRef.value.data = newData;
+    // 或者使用 setData 方法
+    // summaryRef.value.setData(newData);
+  }
+}, { immediate: true });
 </script>
 ```
 
@@ -267,7 +268,7 @@ const handleExpand = (event) => {
 
 | 方法名 | 说明 | 参数 |
 |--------|------|------|
-| `updateData(data)` | 更新数据 | `data: object` |
+| `setData(data)` | 设置数据 | `data: ConversationSummaryData \| null` |
 
 ## 开发
 

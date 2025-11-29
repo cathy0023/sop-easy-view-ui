@@ -1,13 +1,12 @@
-import { expect, fixture, html, oneEvent } from '@open-wc/testing';
+import { expect, fixture, html } from '@open-wc/testing';
 import '../../index.ts';
-import { CONVERSATION_EVENTS } from './types';
 import type { ConversationSummaryData } from './types';
 
 /**
  * megaview-conversation-summary 组件单元测试
  *
  * 设计说明：
- * - 覆盖空状态、属性解析、交互事件和可访问性键盘行为
+ * - 覆盖空状态、属性解析、交互行为和可访问性键盘行为
  * - 采用真实自定义元素实例，确保渲染结构与生产环境一致
  */
 describe('megaview-conversation-summary', () => {
@@ -48,31 +47,20 @@ describe('megaview-conversation-summary', () => {
     expect(questionItems.length).to.equal(1);
   });
 
-  it('点击可展开的问题时会派发 section-expand 事件', async () => {
+  it('支持点击展开/折叠内容', async () => {
     const element = await fixture<HTMLElement>(html`
       <megaview-conversation-summary .data=${createData()}></megaview-conversation-summary>
     `);
     const toggleTarget = element.shadowRoot?.querySelector('.question-header.has-details') as HTMLElement;
-    const eventPromise = oneEvent(element, CONVERSATION_EVENTS.expand);
     toggleTarget?.click();
-    const event = await eventPromise;
-    expect(event.detail.questionIndex).to.equal(0);
 
     const detailPanel = element.shadowRoot?.querySelector('.question-content');
     expect(detailPanel).to.exist;
     expect(detailPanel).to.not.have.class('collapsed');
-  });
 
-  it('再次点击会派发 section-collapse 事件', async () => {
-    const element = await fixture<HTMLElement>(html`
-      <megaview-conversation-summary .data=${createData()}></megaview-conversation-summary>
-    `);
-    const toggleTarget = element.shadowRoot?.querySelector('.question-header.has-details') as HTMLElement;
+    // 再次点击折叠
     toggleTarget?.click();
-    const eventPromise = oneEvent(element, CONVERSATION_EVENTS.collapse);
-    toggleTarget?.click();
-    const event = await eventPromise;
-    expect(event.detail.questionIndex).to.equal(0);
+    expect(detailPanel).to.have.class('collapsed');
   });
 
   it('支持键盘 Enter 键展开内容，满足基础可访问性', async () => {
@@ -80,10 +68,9 @@ describe('megaview-conversation-summary', () => {
       <megaview-conversation-summary .data=${createData()}></megaview-conversation-summary>
     `);
     const toggleTarget = element.shadowRoot?.querySelector('.question-header.has-details') as HTMLElement;
-    const eventPromise = oneEvent(element, CONVERSATION_EVENTS.expand);
     const keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true });
     toggleTarget?.dispatchEvent(keyboardEvent);
-    await eventPromise;
+
     const ariaExpanded = toggleTarget?.getAttribute('aria-expanded');
     expect(ariaExpanded).to.equal('true');
   });

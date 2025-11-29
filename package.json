@@ -23,6 +23,7 @@
   ],
   "scripts": {
     "dev": "vite",
+    "dev:watch": "vite --watch",
     "build": "vite build && tsc -p tsconfig.build.json",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
@@ -31,7 +32,13 @@
     "prepublishOnly": "npm run build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "link": "npm link && echo 组件库已链接，现在运行 npm run build 构建，然后启动examples即可实时验证",
+    "dev:examples": "npm run build && echo '✅ 组件库已构建完成！现在可以运行: npm run example:vue3 或 npm run example:react 或 npm run example:vue2'",
+    "example:vue3": "cd examples/vue3 && npm run dev",
+    "example:react": "cd examples/react && npm run dev",
+    "example:vue2": "cd examples/vue2 && npm run dev",
+    "examples:help": "echo ==================================== && echo      MegaviewUI 开发指南 && echo ==================================== && echo. && echo 🔧 实时验证组件修改 (推荐): && echo   步骤: && echo   1. 修改组件库代码 (src目录下) && echo   2. npm run build && echo   3. 如果examples已启动，会自动看到变化 && echo. && echo 🔄 自动监听模式 (可选): && echo   npm run dev:watch  - 自动重新构建 (新终端) && echo   npm run example:vue3 - 启动示例验证 (另一个终端) && echo. && echo 💡 技术说明: && echo   examples使用 file:../.. 依赖主项目的dist目录 && echo   修改源码后需要重新build才能生效 && echo. && echo 📍 默认端口: && echo   Vue3:  http://localhost:5173 && echo   React: http://localhost:5174 && echo   Vue2:  http://localhost:5175"
   },
   "keywords": [
     "web-components",

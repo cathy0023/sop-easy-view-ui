@@ -114,11 +114,14 @@ export const conversationSummaryStyles = css`
   }
 
   .question-content {
-    padding: 16px;
-    padding-left: 32px;
+    padding: 8px 16px 8px 32px;
     color: inherit;
     line-height: 1.8;
     border-radius: 4px;
+  }
+  
+  .question-content:first-of-type {
+    padding: 4px 16px 4px 32px;
   }
 
   .question-content.collapsed {

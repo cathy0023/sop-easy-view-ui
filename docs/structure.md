@@ -28,7 +28,7 @@ MegaviewUI/
 │   │       └── main.jsx
 │   ├── vanilla/             # 原生 HTML 使用示例
 │   │   └── index.html
-│   └── vue/                 # Vue 3 集成示例
+│   └── vue3/                # Vue 3 集成示例
 │       ├── index.html
 │       ├── package.json
 │       ├── vite.config.js
@@ -114,7 +114,7 @@ MegaviewUI/
 
 - **conversation-summary/**：会话纪要组件
   - `index.ts`：组件主文件，定义并导出 `MegaviewConversationSummary` 类
-  - `types.ts`：组件相关的 TypeScript 类型定义和事件常量
+  - `types.ts`：组件相关的 TypeScript 类型定义
   - `conversation-summary.styles.ts`：组件样式（使用 Lit 的 `css` 标签）
   - `conversation-summary.test.ts`：组件单元测试
   - `conversation-summary.stories.ts`：Storybook 故事文件，用于组件文档和可视化测试
@@ -123,7 +123,7 @@ MegaviewUI/
 
 工具函数目录：
 
-- `dom.ts`：DOM 操作相关工具函数（如事件派发、CSS 变量设置）
+- `dom.ts`：DOM 操作相关工具函数（如CSS 变量设置）
 - `format.ts`：格式化相关工具函数（如时间格式化、HTML 转义、文本处理）
 - `index.ts`：工具函数统一导出（可选）
 
@@ -132,7 +132,6 @@ MegaviewUI/
 组件库入口文件：
 - 导入并注册所有组件（触发自定义元素注册）
 - 导出组件类和类型，方便在 TypeScript 中使用
-- 导出事件常量，便于类型安全的事件监听
 
 ### examples/ 示例目录
 
@@ -141,7 +140,7 @@ MegaviewUI/
 - **cdn/**：CDN 方式使用示例（最简单）
 - **vanilla/**：原生 HTML + JavaScript 使用示例
 - **react/**：React 项目集成示例（包含完整项目结构）
-- **vue/**：Vue 3 项目集成示例（包含完整项目结构）
+- **vue3/**：Vue 3 项目集成示例（包含完整项目结构）
 
 ### docs/ 文档目录
 

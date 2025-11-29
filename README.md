@@ -74,8 +74,28 @@ require('megaview-ui');
 </head>
 <body>
   <megaview-conversation-summary
-    data='{"summary_result":[{"question_name":"会话总结","answers":[{"content":"本次对话..."}]}]}'>
+    width="100%"
+    height="600px">
   </megaview-conversation-summary>
+
+  <script>
+    // 使用 setData 方法设置数据
+    const component = document.querySelector('megaview-conversation-summary');
+    component.setData({
+      conversation_id: 349488961,
+      summary_status: 2,
+      summary_result: [
+        {
+          question_name: "会话总结",
+          answers: [
+            {
+              content: "本次对话..."
+            }
+          ]
+        }
+      ]
+    });
+  </script>
 </body>
 </html>
 ```
@@ -90,12 +110,34 @@ require('megaview-ui');
   <script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@0.0.4/dist/megaview-ui.es.js"></script>
 </head>
 <body>
-  <!-- 使用组件 -->
+  <!-- 使用组件（数据通过 JavaScript 设置） -->
   <megaview-conversation-summary
-    data='{"summary_result":[{"question_name":"会话总结","answers":[{"content":"本次对话..."}]}]}'
     width="100%"
     height="600px">
   </megaview-conversation-summary>
+
+  <script>
+    // 等待组件库加载完成后设置数据
+    document.addEventListener('DOMContentLoaded', () => {
+      const component = document.querySelector('megaview-conversation-summary');
+
+      // 使用 setData 方法设置数据
+      component.setData({
+        conversation_id: 349488961,
+        summary_status: 2,
+        summary_result: [
+          {
+            question_name: "会话总结",
+            answers: [
+              {
+                content: "本次对话..."
+              }
+            ]
+          }
+        ]
+      });
+    });
+  </script>
 </body>
 </html>
 ```
@@ -126,22 +168,17 @@ function ConversationSummary({ conversationData }) {
 
   useEffect(() => {
     const element = summaryRef.current;
-
-    const handleExpand = (e) => {
-      console.log('展开:', e.detail.questionIndex);
-    };
-
-    element?.addEventListener('section-expand', handleExpand);
-
-    return () => {
-      element?.removeEventListener('section-expand', handleExpand);
-    };
-  }, []);
+    if (element) {
+      // 使用 setData 方法设置数据
+      element.setData(conversationData);
+    }
+  }, [conversationData]);
 
   return (
     <megaview-conversation-summary
       ref={summaryRef}
-      data={JSON.stringify(conversationData)}
+      width="100%"
+      height="600px"
     />
   );
 }
@@ -168,18 +205,20 @@ import 'megaview-ui'; // 全局注册组件
 <template>
   <megaview-conversation-summary
     ref="summaryRef"
-    :data="dataJson"
-    @section-expand="handleExpand"
+    width="100%"
+    height="600px"
   />
 </template>
 
 <script setup>
 import { MegaviewConversationSummary } from 'megaview-ui'; // 仅用于类型约束
-import { ref, computed } from 'vue';
+import { ref, watch } from 'vue';
 
 const summaryRef = ref<MegaviewConversationSummary>();
 
 const conversationData = ref({
+  conversation_id: 349488961,
+  summary_status: 2,
   summary_result: [
     {
       question_name: "会话总结",
@@ -192,11 +231,13 @@ const conversationData = ref({
   ]
 });
 
-const dataJson = computed(() => JSON.stringify(conversationData.value));
-
-const handleExpand = (event) => {
-  console.log('展开:', event.detail.questionIndex);
-};
+// 监听数据变化，更新组件
+watch(conversationData, (newData) => {
+  if (summaryRef.value) {
+    // 使用 setData 方法设置数据
+    summaryRef.value.setData(newData);
+  }
+}, { immediate: true });
 </script>
 ```
 
@@ -248,9 +289,34 @@ document.documentElement.style.setProperty('--megaview-color-text', '#1f2937');
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `data` | string (JSON) | - | 会话数据（必需） |
 | `width` | string | `'100%'` | 组件宽度 |
 | `height` | string | `'auto'` | 组件高度 |
+
+#### 📊 数据设置方式
+
+**setData 方法**
+```javascript
+const component = document.querySelector('megaview-conversation-summary');
+
+// 使用 setData 方法设置数据（推荐）
+// 方法会进行数据验证，确保数据格式正确
+component.setData({
+  conversation_id: 123,
+  summary_result: [...]
+});
+
+// 清空数据
+component.setData(null);
+```
+
+**HTML 属性**
+```html
+<!-- 只设置尺寸等简单属性 -->
+<megaview-conversation-summary
+  width="100%"
+  height="600px">
+</megaview-conversation-summary>
+```
 
 ### 数据格式
 
@@ -288,9 +354,51 @@ document.documentElement.style.setProperty('--megaview-color-text', '#1f2937');
 
 ## 方法
 
-| 方法名 | 说明 | 参数 |
-|--------|------|------|
-| `updateData(data)` | 更新数据 | `data: object` |
+| 方法名 | 说明 | 参数 | 返回值 |
+|--------|------|------|--------|
+| `setData(data)` | 设置组件数据（主要API，提供数据验证） | `data: ConversationSummaryData \| null` | `void` |
+
+### setData 方法详解
+
+**功能**：设置会话纪要数据，提供完整的格式验证和错误处理
+
+**参数**：
+- `data`: `ConversationSummaryData | null` - 会话数据对象，或null清空数据
+
+**数据验证规则**:
+- 数据必须是对象或null
+- 必须包含 `summary_result` 字段且为数组
+- 数组中每个问题对象必须有 `question_name` 字符串字段
+- 开发环境：验证失败抛出异常
+- 生产环境：验证失败记录错误但不中断
+
+**使用示例**：
+```javascript
+const component = document.querySelector('megaview-conversation-summary');
+
+// 设置完整数据
+component.setData({
+  conversation_id: 349488961,
+  summary_status: 2,
+  summary_result: [
+    {
+      question_name: "销售是否处理了客户的异议",
+      answers: [
+        {
+          content: "否",
+          context: [...],
+          reasoning_process: "..."
+        }
+      ]
+    }
+  ]
+});
+
+// 清空数据
+component.setData(null);
+```
+
+**错误处理**：方法内部会验证数据格式，失败时会记录错误但不会抛出异常，确保组件稳定性。
 
 
 ## 文档

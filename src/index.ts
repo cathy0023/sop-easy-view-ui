@@ -22,15 +22,11 @@ import './components/conversation-summary/index';
 // 导出组件类，方便直接访问实例方法，便于在 React/Vue 等框架中获取引用
 export { default as MegaviewConversationSummary } from './components/conversation-summary/index';
 
-// 导出类型与事件常量，便于业务方在 TypeScript 中复用
+// 导出类型定义，便于业务方在 TypeScript 中复用
 export type {
   ConversationAnswer,
   ConversationContextSnippet,
-  ConversationEventName,
   ConversationQuestionBlock,
-  ConversationSummaryData,
-  SectionToggleDetail
+  ConversationSummaryData
 } from './components/conversation-summary/types';
-
-export { CONVERSATION_EVENTS } from './components/conversation-summary/types';
 

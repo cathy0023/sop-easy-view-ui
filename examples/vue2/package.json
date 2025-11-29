@@ -1,21 +1,18 @@
 {
-  "name": "megaview-ui-vue-example",
+  "name": "megaview-ui-vue2-example",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.3.0",
+    "vue": "^2.7.0",
     "megaview-ui": "file:../.."
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.0",
+    "@vitejs/plugin-vue2": "^2.3.1",
     "vite": "^5.0.0"
   }
 }
-
-

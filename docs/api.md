@@ -8,9 +8,9 @@
 
 #### data
 
-- **类型**: `string` (JSON 字符串)
+- **类型**: `ConversationSummaryData | string | null`
 - **必需**: 是
-- **说明**: 会话数据
+- **说明**: 会话数据。**推荐通过 JavaScript API 设置**，HTML 属性仅用于简单数据
 
 数据结构：
 
@@ -41,11 +41,30 @@
 }
 ```
 
-**示例**:
+**使用示例**:
+
+```javascript
+// 推荐：JavaScript API 设置数据
+const component = document.querySelector('megaview-conversation-summary');
+component.data = {
+  conversation_id: 123,
+  summary_result: [
+    {
+      question_name: "销售是否处理了客户的异议",
+      answers: [{ content: "否" }]
+    }
+  ]
+};
+
+// 或者使用 setData 方法
+component.setData(dataObject);
+```
 
 ```html
+<!-- HTML 属性仅用于简单配置 -->
 <megaview-conversation-summary
-  data='{"summary_result":[{"question_name":"销售是否处理了客户的异议","answers":[{"content":"否"}]}]}'>
+  width="100%"
+  height="600px">
 </megaview-conversation-summary>
 ```
 
@@ -80,67 +99,35 @@
 1. **简单模式**：如果答案中没有 `context` 和 `reasoning_process`，直接显示 `content` 内容
 2. **折叠模式**：如果答案中有 `context` 或 `reasoning_process`，默认折叠，只显示 `question_name`，点击后展开显示完整内容
 
-### 事件（Events）
-
-#### section-expand
-
-当某个问题展开时触发。
-
-**事件详情**:
-
-```typescript
-{
-  detail: {
-    questionIndex: number; // 展开的问题索引
-  }
-}
-```
-
-**监听示例**:
-
-```javascript
-element.addEventListener('section-expand', (e) => {
-  console.log('展开问题索引:', e.detail.questionIndex);
-});
-```
-
-#### section-collapse
-
-当某个问题折叠时触发。
-
-**事件详情**:
-
-```typescript
-{
-  detail: {
-    questionIndex: number; // 折叠的问题索引
-  }
-}
-```
-
-**监听示例**:
-
-```javascript
-element.addEventListener('section-collapse', (e) => {
-  console.log('折叠问题索引:', e.detail.questionIndex);
-});
-```
 
 ### 方法（Methods）
 
-#### updateData(data)
+#### setData(data)
 
-更新组件数据。
+设置组件数据（主要API，提供数据验证）。
 
 **参数**:
 
-- `data`: `Object` - 新的会话数据对象
+- `data`: `ConversationSummaryData | null` - 会话数据对象，或null清空数据
+
+**返回值**: `void`
+
+**数据验证规则**:
+- 数据必须是对象或null
+- 必须包含 `summary_result` 字段且为数组
+- 数组中每个问题对象必须有 `question_name` 字符串字段
+- 开发环境：验证失败抛出异常
+- 生产环境：验证失败记录错误但不中断
 
 **示例**:
 
 ```javascript
 const element = document.querySelector('megaview-conversation-summary');
-element.updateData({
+
+// 设置数据
+element.setData({
+  conversation_id: 349488961,
+  summary_status: 2,
   summary_result: [
     {
       question_name: "新问题",
@@ -148,6 +135,9 @@ element.updateData({
     }
   ]
 });
+
+// 清空数据
+element.setData(null);
 ```
 
 ## 完整示例
@@ -167,11 +157,11 @@ element.updateData({
       height="600px">
     </megaview-conversation-summary>
   </div>
-  
-  <script type="module">
+
+  <script>
     const summary = document.getElementById('summary');
-    
-    // 设置数据
+
+    // 设置数据（推荐使用 JavaScript API）
     const data = {
       conversation_id: 349488961,
       summary_status: 2,
@@ -212,21 +202,13 @@ element.updateData({
         }
       ]
     };
-    
-    summary.setAttribute('data', JSON.stringify(data));
-    
-    // 监听事件
-    summary.addEventListener('section-expand', (e) => {
-      console.log('展开:', e.detail.questionIndex);
-    });
-    
-    summary.addEventListener('section-collapse', (e) => {
-      console.log('折叠:', e.detail.questionIndex);
-    });
-    
+
+    // 使用 setData 方法设置数据
+    summary.setData(data);
+
     // 3秒后更新数据
     setTimeout(() => {
-      summary.updateData({
+      summary.setData({
         ...data,
         summary_result: [
           ...data.summary_result,

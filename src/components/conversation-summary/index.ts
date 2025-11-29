@@ -9,7 +9,7 @@ import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { repeat } from "lit/directives/repeat.js";
 import { conversationSummaryStyles } from "./conversation-summary.styles";
-import { emitComponentEvent, syncHostSizeVariables } from "../../utils/dom";
+import { syncHostSizeVariables } from "../../utils/dom";
 import {
   escapeHtml,
   formatTimeFromSeconds,
@@ -19,9 +19,7 @@ import type {
   ConversationAnswer,
   ConversationQuestionBlock,
   ConversationSummaryData,
-  SectionToggleDetail,
 } from "./types";
-import { CONVERSATION_EVENTS } from "./types";
 
 /** 默认宽度与高度常量，便于在多个方法中复用 */
 const DEFAULT_DIMENSIONS = {
@@ -78,31 +76,25 @@ const parseDataAttribute = (
  *
  * 使用场景：
  * - 在任何框架或原生 HTML 中通过 `<megaview-conversation-summary>` 渲染会话总结
- * - 可在 React/Vue 中引用组件类以便访问 `updateData` 等方法
+ * - 可在 React/Vue 中引用组件类以便访问 `setData` 等方法
  *
  * Shadow DOM 说明：
  * - 默认开启 Shadow DOM（Lit 内置），确保不同系统之间样式互不影响
  * - 可通过 CSS 变量调整主题色，但不会污染全局命名空间
- *
- * 自定义事件说明：
- * - `section-expand`：某个问题展开时触发，detail = `{ questionIndex }`
- * - `section-collapse`：某个问题折叠时触发，detail 结构相同
  */
 export default class MegaviewConversationSummary extends LitElement {
   /**
    * 会话数据属性
    *
-   * - 通过 attribute converter 自动解析 JSON 字符串
-   * - 同时支持直接赋值为对象（`element.data = {...}`）
+   * - 支持 HTML 属性传入简单数据（不推荐用于复杂数据）
+   * - 推荐通过 JavaScript API 设置复杂数据：`element.setData({...})`
+   * - 复杂数据不会显示在 HTML 属性中，保持界面整洁
    */
-  @property({
-    attribute: "data",
-    converter: {
-      fromAttribute: (value) => parseDataAttribute(value),
-      toAttribute: (value) => value ? JSON.stringify(value) : null,
-    },
-  })
-  public data: ConversationSummaryData | null = null;
+  /**
+   * 内部数据存储（私有属性，不直接暴露给用户）
+   * 用户应通过 setData() 方法来设置数据
+   */
+  private _data: ConversationSummaryData | null = null;
 
   /**
    * 组件宽度（默认 100%），会同步到 CSS 变量 `--megaview-conversation-width`
@@ -168,31 +160,104 @@ export default class MegaviewConversationSummary extends LitElement {
     if (changedProps.has("width") || changedProps.has("height")) {
       this.syncHostDimensions();
     }
+  }
 
-    if (changedProps.has("data")) {
-      console.log('Data property changed:', {
-        newData: this.data,
-        hasSummaryResult: Array.isArray(this.data?.summary_result),
-        summaryResultLength: this.data?.summary_result?.length
-      });
-      // 当数据变化时重置展开状态，避免展开索引与新数据不匹配
-      this.expandedQuestions.clear();
+  /**
+   * 公共方法：设置组件数据（主要API）
+   *
+   * 这是设置会话数据的标准方法，提供数据验证和错误处理。
+   * 不直接暴露 data 属性，确保所有数据设置都经过验证。
+   *
+   * @param data - 会话数据对象
+   * @throws {Error} 当数据格式无效时抛出错误
+   * @example
+   *   // 设置数据
+   *   element.setData({
+   *     conversation_id: 123,
+   *     summary_result: [...]
+   *   });
+   *
+   *   // 清空数据
+   *   element.setData(null);
+   */
+  public setData(data: ConversationSummaryData | null): void {
+    try {
+      if (data === null) {
+        this._data = null;
+        console.log('数据已清空');
+        this.requestUpdate();
+        return;
+      }
+
+      // 数据验证：确保是有效的对象
+      if (typeof data !== 'object' || data === null) {
+        throw new Error('数据必须是有效的对象或 null');
+      }
+
+      // 验证数据结构
+      this.validateDataStructure(data);
+
+      // 设置数据并触发重新渲染
+      this._data = data;
+      this.requestUpdate();
+      console.log('数据设置成功');
+
+    } catch (error) {
+      console.error('setData 失败:', error);
+      // 在开发环境下抛出错误，生产环境下记录错误
+      if (process.env.NODE_ENV === 'development') {
+        throw error;
+      }
     }
   }
 
   /**
-   * 公共方法：用于以编程方式更新组件数据
+   * 验证数据结构的完整性
    *
-   * @param payload - 可以是 JSON 字符串或结构化对象
-   * @example
-   *   element.updateData({ summary_result: [] });
+   * 验证规则：
+   * - 必须包含 summary_result 字段
+   * - summary_result 必须是数组
+   * - 数组中的每个元素必须有 question_name 字段
+   *
+   * @param data - 要验证的数据对象
+   * @private
    */
-  public updateData(payload: ConversationSummaryData | string): void {
-    if (typeof payload === "string") {
-      this.data = parseDataAttribute(payload);
-      return;
+  private validateDataStructure(data: any): void {
+    // 基本类型检查
+    if (!data || typeof data !== 'object') {
+      throw new Error('数据必须是非空对象');
     }
-    this.data = payload ?? null;
+
+    // 检查必需字段：summary_result
+    if (!data.hasOwnProperty('summary_result')) {
+      throw new Error('数据必须包含 summary_result 字段');
+    }
+
+    if (!Array.isArray(data.summary_result)) {
+      throw new Error('summary_result 必须是数组');
+    }
+
+    // 检查数组中的每个问题对象
+    if (data.summary_result.length > 0) {
+      data.summary_result.forEach((item: any, index: number) => {
+        if (!item || typeof item !== 'object') {
+          throw new Error(`summary_result[${index}] 必须是对象`);
+        }
+
+        if (!item.question_name || typeof item.question_name !== 'string') {
+          throw new Error(`summary_result[${index}] 必须包含有效的 question_name 字符串`);
+        }
+
+        // 检查 answers 字段（如果存在）
+        if (item.hasOwnProperty('answers')) {
+          if (!Array.isArray(item.answers)) {
+            throw new Error(`summary_result[${index}].answers 必须是数组`);
+          }
+        }
+      });
+    }
+
+    console.log('数据结构验证通过');
   }
 
   /**
@@ -204,7 +269,7 @@ export default class MegaviewConversationSummary extends LitElement {
   override render(): TemplateResult {
     const questions = this.summaryItems;
     console.log('Component render called:', {
-      data: this.data,
+      data: this._data,
       questionsLength: questions.length,
       summaryItems: questions
     });
@@ -231,8 +296,8 @@ export default class MegaviewConversationSummary extends LitElement {
    * 计算当前有效的 summary_result 列表
    */
   private get summaryItems(): ConversationQuestionBlock[] {
-    return Array.isArray(this.data?.summary_result)
-      ? this.data?.summary_result ?? []
+    return Array.isArray(this._data?.summary_result)
+      ? this._data?.summary_result ?? []
       : [];
   }
 
@@ -461,9 +526,6 @@ export default class MegaviewConversationSummary extends LitElement {
     if (!expandable) return;
     const nextSet = new Set(this.expandedQuestions);
     const isCurrentlyExpanded = nextSet.has(index);
-    const eventName = isCurrentlyExpanded
-      ? CONVERSATION_EVENTS.collapse
-      : CONVERSATION_EVENTS.expand;
 
     if (isCurrentlyExpanded) {
       nextSet.delete(index);
@@ -473,7 +535,6 @@ export default class MegaviewConversationSummary extends LitElement {
 
     this.expandedQuestions = nextSet;
     this.requestUpdate();
-    this.dispatchToggleEvent(eventName, index);
   }
 
   /**
@@ -492,12 +553,4 @@ export default class MegaviewConversationSummary extends LitElement {
     }
   }
 
-  /**
-   * 自定义事件派发的统一封装
-   */
-  private dispatchToggleEvent(eventName: string, index: number): void {
-    emitComponentEvent<SectionToggleDetail>(this, eventName, {
-      questionIndex: index,
-    });
-  }
 }

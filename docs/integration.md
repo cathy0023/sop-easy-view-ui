@@ -1,6 +1,29 @@
 # 集成指南
 
-本文档介绍如何在不同框架中通过 CDN 方式集成深维会话纪要组件。
+本文档介绍如何在不同框架中集成深维会话纪要组件库。
+
+## 🚀 数据设置最佳实践
+
+**重要提醒**：作为业务数据展示组件，复杂数据对象**不应该**在 HTML 属性中设置。推荐通过 JavaScript API 设置数据。
+
+### ✅ 推荐做法
+```javascript
+const component = document.querySelector('megaview-conversation-summary');
+
+// 方法1：直接设置属性
+component.data = dataObject;
+
+// 方法2：使用 setData 方法（提供更好的错误处理）
+component.setData(dataObject);
+```
+
+### ❌ 不推荐做法
+```html
+<!-- 避免在 HTML 中设置复杂数据 -->
+<megaview-conversation-summary
+  data='{"conversation_id":123,"summary_result":[...]}'>
+</megaview-conversation-summary>
+```
 
 ## 原生 HTML 集成
 
@@ -19,14 +42,18 @@
 <body>
   <!-- 2. 使用组件 -->
   <megaview-conversation-summary
-    id="summary">
+    id="summary"
+    width="100%"
+    height="600px">
   </megaview-conversation-summary>
-  
+
   <script>
     const summary = document.getElementById('summary');
-    
-    // 3. 设置数据
+
+    // 3. 设置数据（推荐使用 JavaScript API）
     const data = {
+      conversation_id: 349488961,
+      summary_status: 2,
       summary_result: [
         {
           question_name: "会话总结",
@@ -38,8 +65,12 @@
         }
       ]
     };
-    
-    summary.setAttribute('data', JSON.stringify(data));
+
+    // 推荐方式：直接设置属性
+    summary.data = data;
+
+    // 或者使用 setData 方法（提供更好的错误处理）
+    // summary.setData(data);
   </script>
 </body>
 </html>
@@ -88,16 +119,20 @@ export default defineConfig({
 ```vue
 <template>
   <megaview-conversation-summary
-    :data="dataJson"
-    @section-expand="handleExpand"
-    @section-collapse="handleCollapse"
+    ref="summaryRef"
+    width="100%"
+    height="600px"
   />
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, watch } from 'vue';
+
+const summaryRef = ref();
 
 const conversationData = ref({
+  conversation_id: 349488961,
+  summary_status: 2,
   summary_result: [
     {
       question_name: "会话总结",
@@ -110,21 +145,20 @@ const conversationData = ref({
   ]
 });
 
-const dataJson = computed(() => JSON.stringify(conversationData.value));
-
-const handleExpand = (event) => {
-  console.log('展开:', event.detail.questionIndex);
-};
-
-const handleCollapse = (event) => {
-  console.log('折叠:', event.detail.questionIndex);
-};
+// 使用 JavaScript API 设置数据（推荐）
+watch(conversationData, (newData) => {
+  if (summaryRef.value) {
+    summaryRef.value.data = newData;
+    // 或者使用 setData 方法
+    // summaryRef.value.setData(newData);
+  }
+}, { immediate: true });
 </script>
 ```
 
 ## React 集成
 
-在 React 项目中使用 CDN 方式集成需要注意事件监听和属性传递。
+在 React 项目中使用 CDN 方式集成。
 
 ### 1. 引入脚本
 
@@ -143,8 +177,10 @@ import { useRef, useEffect } from 'react';
 
 function App() {
   const summaryRef = useRef(null);
-  
+
   const conversationData = {
+    conversation_id: 349488961,
+    summary_status: 2,
     summary_result: [
       {
         question_name: "会话总结",
@@ -156,33 +192,22 @@ function App() {
       }
     ],
   };
-  
+
   useEffect(() => {
     const element = summaryRef.current;
-    
-    // 监听展开事件
-    const handleExpand = (e) => {
-      console.log('展开:', e.detail.questionIndex);
-    };
-    
-    // 监听折叠事件
-    const handleCollapse = (e) => {
-      console.log('折叠:', e.detail.questionIndex);
-    };
-    
-    element?.addEventListener('section-expand', handleExpand);
-    element?.addEventListener('section-collapse', handleCollapse);
-    
-    return () => {
-      element?.removeEventListener('section-expand', handleExpand);
-      element?.removeEventListener('section-collapse', handleCollapse);
-    };
-  }, []);
-  
+    if (element) {
+      // 使用 JavaScript API 设置数据（推荐）
+      element.data = conversationData;
+      // 或者使用 setData 方法
+      // element.setData(conversationData);
+    }
+  }, [conversationData]);
+
   return (
     <megaview-conversation-summary
       ref={summaryRef}
-      data={JSON.stringify(conversationData)}
+      width="100%"
+      height="600px"
     />
   );
 }
@@ -211,16 +236,16 @@ declare namespace JSX {
 
 ## 常见问题
 
-### Q: 为什么我在 React 中直接写 `onSection-expand` 不生效？
-A: React 的事件系统（SyntheticEvent）在旧版本中不直接支持 Web Components 的自定义事件。需要使用 `ref` 和 `addEventListener` 来监听。
-
 ### Q: Vue 3 中报错 "Failed to resolve component: megaview-conversation-summary"
 A: 需要在 `vite.config.js` 或 `vue.config.js` 中配置 `isCustomElement`，告诉 Vue 这是一个自定义元素而不是 Vue 组件。
 
 ### Q: 如何动态更新数据？
-A: 可以使用两种方式：
-1. 使用 `setAttribute` 方法：`element.setAttribute('data', JSON.stringify(newData))`
-2. 使用组件的 `updateData` 方法：`element.updateData(newData)`
+A: 推荐使用 JavaScript API：
+1. **直接属性设置**（推荐）：`element.data = newDataObject`
+2. **使用 setData 方法**（提供错误处理）：`element.setData(newDataObject)`
+3. **兼容方式**（不推荐）：`element.setAttribute('data', JSON.stringify(simpleData))`
+
+**最佳实践**：对于复杂数据，永远使用 JavaScript API，避免在 HTML 属性中放置复杂数据。
 
 ### Q: 组件支持哪些浏览器？
 A: 组件基于 Web Components 标准，支持所有现代浏览器：
