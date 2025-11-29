@@ -20,7 +20,7 @@
   summary_status?: number;         // 总结状态
   summary_result: Array<{          // 总结结果数组
     instruction_id: number;        // 指令ID
-    name: string;                  // 分类名称（如"销售sop八部曲"、"客户档案"等）
+    name: string;                  // 分类名称（如"销售XXX"、"客户档案"等）
     question_name: string;         // 问题名称
     answer_desc?: string;          // 答案描述
     create_at?: string;            // 创建时间
@@ -178,7 +178,7 @@ element.updateData({
       summary_result: [
         {
           instruction_id: 968,
-          name: "销售sop八部曲",
+          name: "销售XXX",
           question_name: "销售是否处理了客户的异议",
           answer_desc: "首先判断客户是否提出异议...",
           create_at: "2025-11-25 07:02:51",

@@ -38,10 +38,28 @@ const DEFAULT_DIMENSIONS = {
 const parseDataAttribute = (
   value: string | null
 ): ConversationSummaryData | null => {
-  if (!value) return null;
+  console.log('parseDataAttribute called with:', {
+    value,
+    valueLength: value?.length,
+    isNull: value === null,
+    isUndefined: value === undefined
+  });
+
+  if (!value) {
+    console.log('parseDataAttribute: value is null/empty, returning null');
+    return null;
+  }
+
   try {
     const parsed = JSON.parse(value) as ConversationSummaryData;
-    return parsed && typeof parsed === "object" ? parsed : null;
+    const result = parsed && typeof parsed === "object" ? parsed : null;
+    console.log('parseDataAttribute result:', {
+      parsed,
+      hasSummaryResult: Array.isArray(parsed?.summary_result),
+      summaryResultLength: parsed?.summary_result?.length,
+      result
+    });
+    return result;
   } catch (error) {
     // 这里仍然保持 console.error，便于排查错误数据
     console.error("Invalid data JSON:", error);
@@ -81,7 +99,7 @@ export default class MegaviewConversationSummary extends LitElement {
     attribute: "data",
     converter: {
       fromAttribute: (value) => parseDataAttribute(value),
-      toAttribute: () => null, // 避免对象被序列化回字符串
+      toAttribute: (value) => value ? JSON.stringify(value) : null,
     },
   })
   public data: ConversationSummaryData | null = null;
@@ -145,11 +163,18 @@ export default class MegaviewConversationSummary extends LitElement {
    * @param changedProps - 被 Lit 追踪的变更集合
    */
   protected override updated(changedProps: PropertyValueMap<this>): void {
+    console.log('Component updated, changedProps:', Array.from(changedProps.keys()));
+
     if (changedProps.has("width") || changedProps.has("height")) {
       this.syncHostDimensions();
     }
 
     if (changedProps.has("data")) {
+      console.log('Data property changed:', {
+        newData: this.data,
+        hasSummaryResult: Array.isArray(this.data?.summary_result),
+        summaryResultLength: this.data?.summary_result?.length
+      });
       // 当数据变化时重置展开状态，避免展开索引与新数据不匹配
       this.expandedQuestions.clear();
     }
@@ -178,7 +203,14 @@ export default class MegaviewConversationSummary extends LitElement {
    */
   override render(): TemplateResult {
     const questions = this.summaryItems;
+    console.log('Component render called:', {
+      data: this.data,
+      questionsLength: questions.length,
+      summaryItems: questions
+    });
+
     if (questions.length === 0) {
+      console.log('Rendering empty state');
       return this.renderEmptyState();
     }
 

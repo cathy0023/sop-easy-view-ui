@@ -273,3 +273,4 @@ export default {
 - [全局颜色变量定义](../src/styles/global.css) - 查看完整的变量定义
 - [集成指南](./integration.md) - 了解如何在不同框架中集成
 - [API 文档](./api.md) - 组件 API 参考
+
