@@ -30,17 +30,17 @@
 这是推荐的方式，适用于使用构建工具（Vite、Webpack、Rollup 等）的项目。
 
 ```bash
-npm install megaview-ui
+npm install @megaview/easy-view
 ```
 
 安装后，在代码中引入：
 
 ```javascript
 // ES Module
-import 'megaview-ui';
+import '@megaview/easy-view';
 
 // CommonJS
-require('megaview-ui');
+require('@megaview/easy-view');
 ```
 
 ### 方式二：通过 CDN 引入
@@ -51,20 +51,20 @@ require('megaview-ui');
 
 ```html
 <!-- ES Module 版本（推荐，现代浏览器） -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.es.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@megaview/easy-view@0.0.12/dist/megaview-ui.es.js"></script>
 
 <!-- IIFE 版本（传统浏览器，无需模块系统） -->
-<script src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@megaview/easy-view@0.0.12/dist/megaview-ui.iife.js"></script>
 ```
 
 #### unpkg CDN
 
 ```html
 <!-- ES Module 版本 -->
-<script type="module" src="https://unpkg.com/megaview-ui@1.0.0/dist/megaview-ui.es.js"></script>
+<script type="module" src="https://unpkg.com/@megaview/easy-view@0.0.12/dist/megaview-ui.es.js"></script>
 
 <!-- IIFE 版本 -->
-<script src="https://unpkg.com/megaview-ui@1.0.0/dist/megaview-ui.iife.js"></script>
+<script src="https://unpkg.com/@megaview/easy-view@0.0.12/dist/megaview-ui.iife.js"></script>
 ```
 
 #### 自定义 CDN
@@ -73,10 +73,10 @@ require('megaview-ui');
 
 ```html
 <!-- ES Module 版本 -->
-<script type="module" src="https://cdn.yourdomain.com/megaview-ui/1.0.0/megaview-ui.es.js"></script>
+<script type="module" src="https://cdn.yourdomain.com/@megaview/easy-view/0.0.12/megaview-ui.es.js"></script>
 
 <!-- IIFE 版本 -->
-<script src="https://cdn.yourdomain.com/megaview-ui/1.0.0/megaview-ui.iife.js"></script>
+<script src="https://cdn.yourdomain.com/@megaview/easy-view/0.0.12/megaview-ui.iife.js"></script>
 ```
 
 > 💡 **提示**：更多 CDN 部署信息请参考 [DEPLOYMENT.md](./DEPLOYMENT.md)
@@ -92,7 +92,7 @@ require('megaview-ui');
 <html>
 <head>
   <script type="module">
-    import 'megaview-ui';
+    import '@megaview/easy-view';
   </script>
 </head>
 <body>
@@ -110,7 +110,7 @@ require('megaview-ui');
 <html>
 <head>
   <!-- 引入组件库 -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@1.0.0/dist/megaview-ui.es.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@megaview/easy-view@0.0.12/dist/megaview-ui.es.js"></script>
 </head>
 <body>
   <!-- 使用组件 -->
@@ -128,13 +128,13 @@ require('megaview-ui');
 首先安装依赖：
 
 ```bash
-npm install megaview-ui
+npm install @megaview/easy-view
 ```
 
 然后在代码中使用：
 
 ```jsx
-import 'megaview-ui';
+import '@megaview/easy-view';
 import { useRef, useEffect } from 'react';
 
 function App() {
@@ -178,7 +178,7 @@ function App() {
 首先安装依赖：
 
 ```bash
-npm install megaview-ui
+npm install @megaview/easy-view
 ```
 
 然后在代码中使用：
@@ -193,7 +193,7 @@ npm install megaview-ui
 </template>
 
 <script setup>
-import 'megaview-ui';
+import '@megaview/easy-view';
 import { ref, watch } from 'vue';
 
 const conversationData = ref({

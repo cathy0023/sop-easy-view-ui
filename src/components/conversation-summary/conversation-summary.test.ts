@@ -47,25 +47,40 @@ describe('megaview-conversation-summary', () => {
     expect(questionItems.length).to.equal(1);
   });
 
-  it('支持点击展开/折叠内容', async () => {
+  it('支持点击展开/折叠上下文和推理，但不影响 answer-content 的展示', async () => {
     const element = await fixture<HTMLElement>(html`
-      <megaview-conversation-summary .data=${createData()}></megaview-conversation-summary>
+      <megaview-conversation-summary
+        details-default-state="collapsed"
+        .data=${createData()}
+      ></megaview-conversation-summary>
     `);
     const toggleTarget = element.shadowRoot?.querySelector('.question-header.has-details') as HTMLElement;
     toggleTarget?.click();
 
-    const detailPanel = element.shadowRoot?.querySelector('.question-content');
-    expect(detailPanel).to.exist;
-    expect(detailPanel).to.not.have.class('collapsed');
+    const contextSection = element.shadowRoot?.querySelector('.context-section');
+    const reasoningSection = element.shadowRoot?.querySelector('.reasoning-section');
+    const answerContent = element.shadowRoot?.querySelector('.answer-content');
 
-    // 再次点击折叠
+    // 展开状态下：上下文 & 推理可见，正文始终存在
+    expect(contextSection).to.exist;
+    expect(reasoningSection).to.exist;
+    expect(answerContent).to.exist;
+    expect(contextSection).to.not.have.class('collapsed');
+    expect(reasoningSection).to.not.have.class('collapsed');
+
+    // 再次点击折叠：只折叠上下文和推理，正文依旧存在
     toggleTarget?.click();
-    expect(detailPanel).to.have.class('collapsed');
+    expect(contextSection).to.have.class('collapsed');
+    expect(reasoningSection).to.have.class('collapsed');
+    expect(answerContent).to.exist;
   });
 
   it('支持键盘 Enter 键展开内容，满足基础可访问性', async () => {
     const element = await fixture<HTMLElement>(html`
-      <megaview-conversation-summary .data=${createData()}></megaview-conversation-summary>
+      <megaview-conversation-summary
+        details-default-state="collapsed"
+        .data=${createData()}
+      ></megaview-conversation-summary>
     `);
     const toggleTarget = element.shadowRoot?.querySelector('.question-header.has-details') as HTMLElement;
     const keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true });
@@ -73,6 +88,22 @@ describe('megaview-conversation-summary', () => {
 
     const ariaExpanded = toggleTarget?.getAttribute('aria-expanded');
     expect(ariaExpanded).to.equal('true');
+  });
+
+  it('在默认配置下会将详情初始化为展开状态', async () => {
+    const element = await fixture<HTMLElement>(html`
+      <megaview-conversation-summary .data=${createData()}></megaview-conversation-summary>
+    `);
+    const contextSection = element.shadowRoot?.querySelector('.context-section');
+    const reasoningSection = element.shadowRoot?.querySelector('.reasoning-section');
+    const header = element.shadowRoot?.querySelector('.question-header.has-details');
+
+    // 默认配置下，详情应该是展开的
+    expect(contextSection).to.exist;
+    expect(reasoningSection).to.exist;
+    expect(contextSection).to.not.have.class('collapsed');
+    expect(reasoningSection).to.not.have.class('collapsed');
+    expect(header?.getAttribute('aria-expanded')).to.equal('true');
   });
 
   it('会将 width/height 属性同步为 CSS 变量', async () => {

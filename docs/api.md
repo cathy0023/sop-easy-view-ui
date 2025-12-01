@@ -147,7 +147,7 @@ element.setData(null);
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <script type="module" src="https://cdn.megaview.com/ui/1.0.0/megaview-ui.es.js"></script>
+  <script type="module" src="https://cdn.megaview.com/ui/0.0.12/megaview-ui.es.js"></script>
 </head>
 <body>
   <div style="padding: 20px;">

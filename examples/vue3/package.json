@@ -1,5 +1,5 @@
 {
-  "name": "megaview-ui-vue3-example",
+  "name": "@megaview/easy-view-vue3-example",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "vue": "^3.3.0",
-    "megaview-ui": "file:../.."
+    "@megaview/easy-view": "file:../.."
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",

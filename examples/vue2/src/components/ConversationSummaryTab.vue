@@ -20,7 +20,7 @@
 // 3. 在 mounted 生命周期钩子中初始化数据和事件监听
 // 4. 提供更新数据功能来演示动态更新能力
 // 5. 使用相同的测试数据结构确保与 Vue3/React 版本的一致性
-import "megaview-ui";
+import "@megaview/easy-view";
 
 export default {
   name: 'ConversationSummaryTab',

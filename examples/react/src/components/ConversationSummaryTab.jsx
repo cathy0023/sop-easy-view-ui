@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import 'megaview-ui';
+import '@megaview/easy-view';
 
 // 会话纪要组件 - 展示会话总结信息的组件
 // 设计思想：

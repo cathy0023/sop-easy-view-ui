@@ -2,6 +2,13 @@
 
 > 该文件由 Semantic Release 自动维护，请勿手动编辑。
 
+## [0.0.12] - 2025-12-01
+
+### 更新
+- npm 包从 `megaview-ui` 迁移为 scoped 包 `@megaview/easy-view`
+- 同步更新 README 与 docs 中的安装命令和 CDN 链接
+- 示例项目（React/Vue2/Vue3/CDN）全部切换为新包名引用
+
 ## [0.0.10] - 2025-12-01
 
 ### 更新

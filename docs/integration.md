@@ -37,7 +37,7 @@ component.setData(dataObject);
 <head>
   <meta charset="UTF-8">
   <!-- 1. 引入组件库 -->
-  <script type="module" src="https://cdn.megaview.com/ui/1.0.0/megaview-ui.es.js"></script>
+  <script type="module" src="https://cdn.megaview.com/ui/0.0.12/megaview-ui.es.js"></script>
 </head>
 <body>
   <!-- 2. 使用组件 -->
@@ -86,7 +86,7 @@ component.setData(dataObject);
 
 ```html
 <head>
-  <script type="module" src="https://cdn.megaview.com/ui/1.0.0/megaview-ui.es.js"></script>
+  <script type="module" src="https://cdn.megaview.com/ui/0.0.12/megaview-ui.es.js"></script>
 </head>
 ```
 
@@ -166,7 +166,7 @@ watch(conversationData, (newData) => {
 
 ```html
 <head>
-  <script type="module" src="https://cdn.megaview.com/ui/1.0.0/megaview-ui.es.js"></script>
+  <script type="module" src="https://cdn.megaview.com/ui/0.0.12/megaview-ui.es.js"></script>
 </head>
 ```
 

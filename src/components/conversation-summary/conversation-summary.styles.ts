@@ -50,7 +50,12 @@ export const conversationSummaryStyles = css`
 
   .question-item {
     margin-bottom: 12px;
+    border-radius: 4px;
     background: var(--megaview-color-surface, var(--megaview-conversation-card-bg, #ffffff));
+  }
+
+  .question-item:hover {
+    background-color: var(--megaview-color-hover, var(--megaview-conversation-hover, #f5f5f5));
   }
 
   .question-item:last-child {
@@ -62,12 +67,11 @@ export const conversationSummaryStyles = css`
     align-items: center;
     gap: 12px;
     user-select: none;
-    padding: 12px 16px;
+    padding: 8px 16px;
     border-radius: 4px;
     transition: background-color 0.2s;
     position: relative;
     padding-left: 20px;
-    margin-bottom: 4px;
   }
 
   .question-header.has-details {
@@ -78,20 +82,28 @@ export const conversationSummaryStyles = css`
     cursor: default;
   }
 
-  .question-header.has-details:hover {
-    background-color: var(--megaview-color-hover, var(--megaview-conversation-hover, #f5f5f5));
-  }
-
   .question-header::before {
+    /* 
+     * 问题标题左侧标记点样式
+     *
+     * 设计说明：
+     * - 旧版本这里是一条竖直的蓝色高亮条，和系统中其他模块的“重点高亮条”设计一致
+     * - 实际使用中，用户会误以为这两种高亮条表达的是同一层级/同一含义，造成概念混淆
+     * - 为了弱化“结构层级”的暗示、强化“这是一个问题条目”的感觉，我们改成一个小圆点标记
+     *
+     * 视觉效果：
+     * - 小圆点使用主题主色，尺寸较小，不会抢占太多视觉注意力
+     * - 与传统的列表项 bullet 有些类似，可以自然地表达“这是一个问题项”的含义
+     */
     content: '';
     position: absolute;
     left: 8px;
     top: 50%;
     transform: translateY(-50%);
-    width: 3px;
-    height: 16px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
     background-color: var(--megaview-color-primary, var(--megaview-conversation-primary, #4461ec));
-    border-radius: 2px;
   }
 
   .question-name {
@@ -118,19 +130,48 @@ export const conversationSummaryStyles = css`
   }
 
   .question-content {
-    padding: 12px 16px 12px 24px;
+    padding: 4px 16px 12px 24px;
     color: inherit;
     line-height: 1.8;
     border-radius: 4px;
-    background: var(--megaview-color-bg, var(--megaview-conversation-bg, #f5f5f5));
+    /* 
+     * 折叠动画说明：
+     * - 这里为问答内容区域预置「高度 + 透明度」的过渡动画
+     * - 当外部为 .question-content 添加 .collapsed 类时，会看到从展开到收起的平滑动画
+     * - 之所以使用 max-height 而不是 display: none，是因为 display: none 无法参与过渡动画
+     * - 2000px 只是一个足够大的理论上限，保证正常内容不会被裁剪
+     */
+    max-height: 2000px;
+    opacity: 1;
+    overflow: hidden;
+    transition:
+      max-height 0.25s ease,
+      opacity 0.25s ease,
+      padding-top 0.25s ease,
+      padding-bottom 0.25s ease,
+      margin-top 0.25s ease,
+      margin-bottom 0.25s ease;
   }
   
-  .question-content:first-of-type {
-    padding: 4px 16px 4px 32px;
+  .question-content:first-child {
+    padding: 0px 16px 12px 24px;
   }
 
+  /**
+   * 问答内容折叠状态
+   *
+   * 设计思路：
+   * - 通过减小 max-height + 降低透明度来模拟「收起」动画
+   * - 同时去掉上下内边距和上下外边距，避免折叠后留下多余空白
+   * - 不使用 display: none，这样浏览器才能执行过渡动画
+   */
   .question-content.collapsed {
-    display: none;
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .answer-content {
@@ -148,9 +189,42 @@ export const conversationSummaryStyles = css`
   }
 
   .context-section {
-    margin-top: 16px;
-    padding-top: 16px;
+    margin-top: 8px;
+    padding-top: 8px;
     border-top: 1px solid var(--megaview-color-border, var(--megaview-conversation-border, #e0e0e0));
+    /* 
+     * 上下文区域折叠动画基础样式
+     *
+     * 设计思路：
+     * - 使用 max-height + opacity 的方式来实现「展开/收起」的过渡动画
+     * - 不能使用 display: none，因为那样浏览器不会对高度变化做动画
+     * - 这里给一个足够大的 max-height（例如 2000px），正常内容高度远小于此值
+     */
+    max-height: 2000px;
+    opacity: 1;
+    overflow: hidden;
+    transition:
+      max-height 0.25s ease,
+      opacity 0.25s ease,
+      padding-top 0.25s ease,
+      padding-bottom 0.25s ease,
+      margin-top 0.25s ease;
+  }
+
+  /**
+   * 当上下文被折叠时隐藏整块内容（带动画）
+   *
+   * 说明：
+   * - 不再使用 display: none，而是通过减小 max-height + 降低透明度实现动画
+   * - 同时收紧 padding / margin，避免折叠后留下多余空白
+   */
+  .context-section.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    border-top: none;
   }
 
   .context-title {
@@ -198,6 +272,25 @@ export const conversationSummaryStyles = css`
 
   .reasoning-section {
     padding-top: 16px;
+    /* 推理区域折叠动画基础样式，逻辑与 context-section 一致 */
+    max-height: 2000px;
+    opacity: 1;
+    overflow: hidden;
+    transition:
+      max-height 0.25s ease,
+      opacity 0.25s ease,
+      padding-top 0.25s ease,
+      padding-bottom 0.25s ease,
+      margin-top 0.25s ease;
+  }
+
+  /* 推理详情折叠状态样式，使用高度 + 透明度过渡而不是直接隐藏 */
+  .reasoning-section.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
   }
 
   .reasoning-title {

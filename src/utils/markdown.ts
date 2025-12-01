@@ -11,7 +11,11 @@
  * - 将 Markdown 文本安全地渲染为 HTML
  */
 
-import { marked } from 'marked';
+// 从 marked 库中同时导入解析函数和类型定义
+// 注意：在新版 marked 中类型定义不再挂在命名空间 marked.MarkedOptions 上
+// 而是直接通过具名导出的 MarkedOptions 类型提供
+// 这里使用 type 仅导入类型，避免在运行时代码中引入多余内容
+import { marked, type MarkedOptions } from 'marked';
 import DOMPurify from 'dompurify';
 
 /**
@@ -148,8 +152,12 @@ export function isMarkdown(text: string): boolean {
  *
  * - breaks: true - 将单个换行符转换为 <br>，保留原始文本的换行格式
  * - gfm: true - 启用 GitHub Flavored Markdown，支持表格、删除线等扩展语法
+ *
+ * 这里显式使用 MarkedOptions 类型：
+ * - 目的是让 TypeScript 对配置项做静态检查
+ * - 同时兼容 marked 15+ 的类型导出方式（不再使用 marked.MarkedOptions 命名空间写法）
  */
-const markedOptions: marked.MarkedOptions = {
+const markedOptions: MarkedOptions = {
   breaks: true,
   gfm: true,
 };

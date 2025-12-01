@@ -1,6 +1,8 @@
-# 深维会话纪要组件库
+# Megaview可视化组件库
 
 基于 Web Components 的框架无关可视化组件库。
+
+> 当前 npm 包名：`@megaview/easy-view`（原包名 `megaview-ui` 已停止更新，仅保留历史版本）
 
 ## 安装
 
@@ -9,20 +11,20 @@
 这是推荐的方式，适用于使用构建工具（Vite、Webpack、Rollup 等）的项目。
 
 ```bash
-npm install megaview-ui
+npm install @megaview/easy-view
 ```
 
 安装后，在代码中引入：
 
 ```javascript
 // ES Module - 推荐方式（自动注册组件）
-import 'megaview-ui';
+import '@megaview/easy-view';
 
 // 或者按需导入组件类（用于类型约束或实例方法调用）
-import { MegaviewConversationSummary } from 'megaview-ui';
+import { MegaviewConversationSummary } from '@megaview/easy-view';
 
 // CommonJS
-require('megaview-ui');
+require('@megaview/easy-view');
 ```
 
 ### 方式二：通过 CDN 引入
@@ -33,27 +35,27 @@ require('megaview-ui');
 
 ```html
 <!-- ES Module 版本（推荐，现代浏览器） -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@0.0.10/dist/megaview-ui.es.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@megaview/easy-view@0.0.12/dist/megaview-ui.es.js"></script>
 
 <!-- IIFE 版本（传统浏览器，无需模块系统） -->
-<script src="https://cdn.jsdelivr.net/npm/megaview-ui@0.0.10/dist/megaview-ui.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@megaview/easy-view@0.0.12/dist/megaview-ui.iife.js"></script>
 ```
 
 #### unpkg CDN
 
 ```html
 <!-- ES Module 版本 -->
-<script type="module" src="https://unpkg.com/megaview-ui@0.0.10/dist/megaview-ui.es.js"></script>
+<script type="module" src="https://unpkg.com/@megaview/easy-view@0.0.12/dist/megaview-ui.es.js"></script>
 
 <!-- IIFE 版本 -->
-<script src="https://unpkg.com/megaview-ui@0.0.10/dist/megaview-ui.iife.js"></script>
+<script src="https://unpkg.com/@megaview/easy-view@0.0.12/dist/megaview-ui.iife.js"></script>
 ```
 
 > 💡 **提示**：更多 CDN 部署信息请参考 [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 #### 关于导入方式的说明
 
-- **全局导入（推荐）** `import 'megaview-ui'`：在应用入口处导入一次，自动注册所有自定义元素，后续可在任何组件中使用 `<megaview-conversation-summary>`
+- **全局导入（推荐）** `import '@megaview/easy-view'`：在应用入口处导入一次，自动注册所有自定义元素，后续可在任何组件中使用 `<megaview-conversation-summary>`
 - **具名导入（可选）** `import { MegaviewConversationSummary }`：用于 TypeScript 类型约束，在需要类型检查的组件中单独导入
 - **组合使用**：通常在应用入口全局导入一次，然后在具体组件中按需导入类型
 - **不支持** `import { megaview-conversation-summary }`：JavaScript 标识符不能包含连字符，请使用驼峰命名的 `MegaviewConversationSummary`
@@ -69,7 +71,7 @@ require('megaview-ui');
 <html>
 <head>
   <script type="module">
-    import 'megaview-ui';
+    import '@megaview/easy-view';
   </script>
 </head>
 <body>
@@ -107,7 +109,7 @@ require('megaview-ui');
 <html>
 <head>
   <!-- 引入组件库 -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui@0.0.10/dist/megaview-ui.es.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@megaview/easy-view@0.0.12/dist/megaview-ui.es.js"></script>
 </head>
 <body>
   <!-- 使用组件（数据通过 JavaScript 设置） -->
@@ -147,20 +149,20 @@ require('megaview-ui');
 首先安装依赖：
 
 ```bash
-npm install megaview-ui
+npm install @megaview/easy-view
 ```
 
 然后在应用入口（main.js 或 App.js）全局导入：
 
 ```javascript
 // src/main.js 或 src/App.js
-import 'megaview-ui'; // 全局注册组件
+import '@megaview/easy-view'; // 全局注册组件
 ```
 
 在具体组件中使用：
 
 ```jsx
-import { MegaviewConversationSummary } from 'megaview-ui'; // 仅用于类型约束
+import { MegaviewConversationSummary } from '@megaview/easy-view'; // 仅用于类型约束
 import { useRef, useEffect } from 'react';
 
 function ConversationSummary({ conversationData }) {
@@ -189,14 +191,14 @@ function ConversationSummary({ conversationData }) {
 首先安装依赖：
 
 ```bash
-npm install megaview-ui
+npm install @megaview/easy-view
 ```
 
 然后在应用入口（main.js）全局导入：
 
 ```javascript
 // src/main.js
-import 'megaview-ui'; // 全局注册组件
+import '@megaview/easy-view'; // 全局注册组件
 ```
 
 在具体组件中使用：
@@ -211,7 +213,7 @@ import 'megaview-ui'; // 全局注册组件
 </template>
 
 <script setup>
-import { MegaviewConversationSummary } from 'megaview-ui'; // 仅用于类型约束
+import { MegaviewConversationSummary } from '@megaview/easy-view'; // 仅用于类型约束
 import { ref, watch } from 'vue';
 
 const summaryRef = ref<MegaviewConversationSummary>();

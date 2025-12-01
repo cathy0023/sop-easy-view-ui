@@ -1,4 +1,4 @@
-import 'megaview-ui';
+import '@megaview/easy-view';
 import { useRef, useEffect, useState } from 'react';
 import TabContainer from './components/TabContainer';
 

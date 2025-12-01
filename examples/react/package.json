@@ -1,5 +1,5 @@
 {
-  "name": "megaview-ui-react-example",
+  "name": "@megaview/easy-view-react-example",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "megaview-ui": "file:../.."
+    "@megaview/easy-view": "file:../.."
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.0",

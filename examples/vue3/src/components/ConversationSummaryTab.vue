@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import "megaview-ui";
+import "@megaview/easy-view";
 import { ref, onMounted, watch } from "vue";
 
 // 会话纪要组件引用

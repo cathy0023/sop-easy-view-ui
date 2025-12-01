@@ -54,7 +54,7 @@ MegaviewUI 支持通过 CSS 变量进行全局主题定制，让你能够轻松�
     --megaview-color-hover: #edf2f7;
   }
   </style>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui/dist/megaview-ui.es.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@megaview/easy-view/dist/megaview-ui.es.js"></script>
 </head>
 <body>
   <megaview-conversation-summary data='{"summary_result": [...]}'>
@@ -85,7 +85,7 @@ MegaviewUI 支持通过 CSS 变量进行全局主题定制，让你能够轻松�
 ```html
 <head>
   <link rel="stylesheet" href="theme.css">
-  <script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui/dist/megaview-ui.es.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@megaview/easy-view/dist/megaview-ui.es.js"></script>
 </head>
 ```
 
@@ -97,7 +97,7 @@ MegaviewUI 支持通过 CSS 变量进行全局主题定制，让你能够轻松�
 <!DOCTYPE html>
 <html>
 <head>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/megaview-ui/dist/megaview-ui.es.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@megaview/easy-view/dist/megaview-ui.es.js"></script>
 </head>
 <body>
   <button onclick="changeTheme()">切换主题</button>
@@ -185,7 +185,7 @@ module.exports = {
 
 ```jsx
 // App.js 或 main.js
-import 'megaview-ui'; // 自动导入全局样式
+import '@megaview/easy-view'; // 自动导入全局样式
 
 // 动态主题切换
 import { useEffect } from 'react';
@@ -209,7 +209,7 @@ function App() {
 
 ```javascript
 // main.js
-import 'megaview-ui'; // 自动导入全局样式
+import '@megaview/easy-view'; // 自动导入全局样式
 
 // 在组件中使用
 export default {

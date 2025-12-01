@@ -110,6 +110,36 @@ export default class MegaviewConversationSummary extends LitElement {
   public width: string = DEFAULT_DIMENSIONS.width;
 
   /**
+   * 详情默认展开状态配置（上下文 + 推理）
+   *
+   * 设计目的：
+   * - 早期版本中：有「上下文 / 推理」详情的问题行，整体内容区域默认是折叠的
+   * - 现在的需求：`answer-content`（总结正文）无论是否有详情，都应该默认直接展示
+   * - 同时希望可以通过一个全局属性控制「上下文 + 推理」是默认展开还是默认折叠
+   *
+   * 属性说明：
+   * - 对外暴露为字符串属性 `details-default-state`
+   * - 可选值：
+   *   - `"expanded"`：上下文 + 推理默认展开（推荐默认值）
+   *   - `"collapsed"`：上下文 + 推理默认折叠
+   * - 如果传入其他值，将回退到 `"expanded"`
+   *
+   * 使用示例（HTML）：
+   * ```html
+   * <!-- 默认行为：上下文 + 推理默认展开 -->
+   * <megaview-conversation-summary></megaview-conversation-summary>
+   *
+   * <!-- 显式指定默认展开 -->
+   * <megaview-conversation-summary details-default-state="expanded"></megaview-conversation-summary>
+   *
+   * <!-- 指定默认折叠 -->
+   * <megaview-conversation-summary details-default-state="collapsed"></megaview-conversation-summary>
+   * ```
+   */
+  @property({ type: String, reflect: true, attribute: "details-default-state" })
+  public detailsDefaultState: "expanded" | "collapsed" = "expanded";
+
+  /**
    * 组件高度（默认 auto），会同步到 CSS 变量 `--megaview-conversation-height`
    */
   @property({ type: String, reflect: true })
@@ -118,6 +148,8 @@ export default class MegaviewConversationSummary extends LitElement {
   /**
    * 内部展开状态集合（非响应式字段）
    *
+   * - 用于记录哪些问题行的「详情区域（上下文 + 推理）」当前处于展开状态
+   * - 不再控制 `answer-content` 的显隐，正文内容现在始终展示
    * - 通过 requestUpdate 手动触发渲染，避免在生命周期内重复调度更新
    * - 使用 Set 存储索引，保证增删效率
    */
@@ -213,6 +245,13 @@ export default class MegaviewConversationSummary extends LitElement {
 
       // 设置数据并触发重新渲染
       this._data = data;
+
+      // 每次设置新数据时，根据全局配置初始化「详情默认展开/折叠」状态
+      // 说明：
+      // - 只在 setData 时重置 expandedQuestions，避免用户手动展开/折叠状态被意外覆盖
+      // - 这样可以保证：新的一份数据总是按照配置的默认策略来展开或折叠详情
+      this.initializeExpandedState();
+
       this._dataJustUpdated = true; // 标记数据刚刚更新
       this.requestUpdate();
       console.log('数据设置成功');
@@ -314,6 +353,30 @@ export default class MegaviewConversationSummary extends LitElement {
     return Array.isArray(this._data?.summary_result)
       ? this._data?.summary_result ?? []
       : [];
+  }
+
+  /**
+   * 根据组件配置和当前数据初始化问题的展开状态集合
+   *
+   * 设计说明：
+   * - 这个方法只会在 setData 时被调用
+   * - 目的：根据 `detailsDefaultState` 的配置决定「上下文 + 推理」初始是展开还是折叠
+   * - 不会在普通属性更新时反复重置，避免打断用户已经进行的交互操作
+   */
+  private initializeExpandedState(): void {
+    const questions = this.summaryItems;
+
+    // 规范化配置值，任何非 "collapsed" 的值都视为 "expanded"
+    const shouldExpandByDefault = this.detailsDefaultState !== "collapsed";
+
+    const nextSet = new Set<number>();
+    if (shouldExpandByDefault) {
+      questions.forEach((_, index) => {
+        nextSet.add(index);
+      });
+    }
+
+    this.expandedQuestions = nextSet;
   }
 
   /**
@@ -448,19 +511,24 @@ export default class MegaviewConversationSummary extends LitElement {
    * 渲染包含上下文/推理的详情面板
    *
    * @param answers - 当前问题的答案列表
-   * @param isExpanded - 面板是否展开
+   * @param isExpanded - 详情部分（上下文 + 推理）是否展开
+   *
+   * 重要说明：
+   * - 旧逻辑：`isExpanded` 为 false 时，整个 `.question-content` 都被隐藏，
+   *   这会导致 `answer-content`（总结正文）也一起被折叠
+   * - 新需求：`answer-content` 必须始终展示；`isExpanded` 只控制上下文和推理
+   *
+   * 因此本方法会：
+   * - 始终渲染一层 `.question-content` 容器
+   * - 调用 `renderAnswerContent` 时，将 `isExpanded` 作为「是否展示详情」的标志传入
    */
   private renderQuestionDetails(
     answers: ConversationAnswer[],
     isExpanded: boolean
   ): TemplateResult {
-    if (!isExpanded) {
-      return html`<div class="question-content collapsed"></div>`;
-    }
-
     return html`
       <div class="question-content">
-        ${answers.map((answer) => html` ${this.renderAnswerContent(answer)} `)}
+        ${answers.map((answer) => html` ${this.renderAnswerContent(answer, isExpanded)} `)}
       </div>
     `;
   }
@@ -468,7 +536,10 @@ export default class MegaviewConversationSummary extends LitElement {
   /**
    * 渲染单个答案内部的内容：正文、上下文、推理
    */
-  private renderAnswerContent(answer: ConversationAnswer): TemplateResult {
+  private renderAnswerContent(
+    answer: ConversationAnswer,
+    detailsExpanded: boolean = true
+  ): TemplateResult {
     const contextList = answer.context ?? [];
     return html`
       ${answer.content
@@ -478,7 +549,12 @@ export default class MegaviewConversationSummary extends LitElement {
         : nothing}
       ${contextList.length > 0
         ? html`
-            <div class="context-section">
+            <div
+              class=${classMap({
+                "context-section": true,
+                collapsed: !detailsExpanded,
+              })}
+            >
               <div class="context-title">上下文</div>
               ${repeat(
                 contextList,
@@ -516,7 +592,12 @@ export default class MegaviewConversationSummary extends LitElement {
         : nothing}
       ${answer.reasoning_process
         ? html`
-            <div class="reasoning-section">
+            <div
+              class=${classMap({
+                "reasoning-section": true,
+                collapsed: !detailsExpanded,
+              })}
+            >
               <div class="reasoning-title">推理</div>
               <div class="reasoning-content">
                 ${this.renderMultilineText(answer.reasoning_process)}
