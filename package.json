@@ -72,6 +72,7 @@
     "@storybook/addon-docs": "^10.1.0",
     "@storybook/addon-vitest": "^10.1.0",
     "@storybook/web-components-vite": "^10.1.0",
+    "@types/dompurify": "^3.0.5",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.10.1",
     "@vitest/browser-playwright": "^4.0.14",
@@ -89,8 +90,10 @@
     "vitest": "^4.0.14"
   },
   "dependencies": {
+    "dompurify": "^3.3.0",
     "lit": "^3.3.1",
     "lucide": "^0.555.0",
+    "marked": "^15.0.12",
     "tslib": "^2.8.1"
   }
 }

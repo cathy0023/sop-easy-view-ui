@@ -8,6 +8,7 @@ import {
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { repeat } from "lit/directives/repeat.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { conversationSummaryStyles } from "./conversation-summary.styles";
 import { syncHostSizeVariables } from "../../utils/dom";
 import {
@@ -15,6 +16,7 @@ import {
   formatTimeFromSeconds,
   splitMultilineText,
 } from "../../utils/format";
+import { isMarkdown, renderMarkdown } from "../../utils/markdown";
 import type {
   ConversationAnswer,
   ConversationQuestionBlock,
@@ -526,14 +528,48 @@ export default class MegaviewConversationSummary extends LitElement {
   }
 
   /**
-   * 将多行文本拆分并插入 <br />，同时保证 HTML 转义
+   * 渲染多行文本，支持 Markdown 和普通文本两种格式
+   *
+   * 自动检测文本格式：
+   * - 如果检测到 Markdown 语法特征，使用 marked 库渲染为 HTML
+   * - 否则按照普通多行文本处理，使用 <br> 标签换行并转义 HTML
+   *
+   * Markdown 检测说明：
+   * - 通过检测常见的 Markdown 语法特征（标题、粗体、列表、代码块等）来判断
+   * - 至少需要匹配 2 个不同的 Markdown 特征才判定为 Markdown，避免误判普通文本
+   * - 检测结果会影响渲染方式，但不影响数据本身
+   *
+   * 安全性说明：
+   * - Markdown 渲染后的 HTML 会经过 DOMPurify 清理，防止 XSS 攻击
+   * - 普通文本会通过 escapeHtml 函数转义，确保安全性
+   *
+   * @param value - 待渲染的文本内容（可能是 Markdown 或普通文本）
+   * @returns Lit 模板结果，包含渲染后的内容
    */
   private renderMultilineText(value?: string): TemplateResult | typeof nothing {
     if (!value) return nothing;
-    const segments = splitMultilineText(value);
-    return html`${segments.map(
-      (segment, index) => html`${index > 0 ? html`<br />` : nothing}${segment}`
-    )}`;
+
+    // 检测文本是否为 Markdown 格式
+    // isMarkdown 函数会检测常见的 Markdown 语法特征，如标题、粗体、列表等
+    const isMarkdownFormat = isMarkdown(value);
+
+    if (isMarkdownFormat) {
+      // 如果检测到 Markdown 格式，使用 marked 库渲染
+      // renderMarkdown 函数会将 Markdown 转换为 HTML，并经过 DOMPurify 清理以确保安全
+      const htmlContent = renderMarkdown(value);
+
+      // 使用 unsafeHTML 指令渲染 HTML
+      // unsafeHTML 是 Lit 提供的指令，用于渲染 HTML 字符串
+      // 注意：这里虽然叫 unsafeHTML，但 HTML 已经经过 DOMPurify 清理，是安全的
+      return html`<div class="markdown-content">${unsafeHTML(htmlContent)}</div>`;
+    } else {
+      // 如果是普通文本，按照原有的多行文本逻辑处理
+      // splitMultilineText 会将文本按换行符拆分，并对每段进行 HTML 转义
+      const segments = splitMultilineText(value);
+      return html`${segments.map(
+        (segment, index) => html`${index > 0 ? html`<br />` : nothing}${segment}`
+      )}`;
+    }
   }
 
   /**

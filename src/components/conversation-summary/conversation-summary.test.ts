@@ -82,5 +82,47 @@ describe('megaview-conversation-summary', () => {
     expect(element.style.getPropertyValue('--megaview-conversation-width').trim()).to.equal('320px');
     expect(element.style.getPropertyValue('--megaview-conversation-height').trim()).to.equal('480px');
   });
+
+  it('应该自动检测并渲染 Markdown 格式的内容', async () => {
+    const markdownData: ConversationSummaryData = {
+      conversation_id: 2,
+      summary_result: [
+        {
+          question_name: 'Markdown 测试',
+          answers: [
+            {
+              content: '# 标题\n**粗体文本**\n- 列表项1\n- 列表项2'
+            }
+          ]
+        }
+      ]
+    };
+    const element = await fixture<HTMLElement>(html`
+      <megaview-conversation-summary .data=${markdownData}></megaview-conversation-summary>
+    `);
+    const markdownContent = element.shadowRoot?.querySelector('.markdown-content');
+    expect(markdownContent).to.exist;
+  });
+
+  it('应该对普通文本使用原有的多行文本渲染方式', async () => {
+    const normalData: ConversationSummaryData = {
+      conversation_id: 3,
+      summary_result: [
+        {
+          question_name: '普通文本测试',
+          answers: [
+            {
+              content: '这是普通文本\n不包含 Markdown 语法'
+            }
+          ]
+        }
+      ]
+    };
+    const element = await fixture<HTMLElement>(html`
+      <megaview-conversation-summary .data=${normalData}></megaview-conversation-summary>
+    `);
+    const markdownContent = element.shadowRoot?.querySelector('.markdown-content');
+    expect(markdownContent).to.not.exist;
+  });
 });
 

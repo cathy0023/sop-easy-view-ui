@@ -298,3 +298,142 @@ element.setData(null);
   }
 };
 
+export const MarkdownContent: Story = {
+  name: 'Markdown 格式内容',
+  args: {
+    width: '100%',
+    height: 'auto'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '演示组件自动检测并渲染 Markdown 格式的文本内容。组件会自动识别 Markdown 语法特征（如标题、列表、代码块等），并使用 Markdown 渲染器进行渲染。'
+      }
+    }
+  },
+  render: (args) => {
+    const elementId = 'conversation-summary-markdown';
+    
+    // 包含 Markdown 格式的示例数据
+    const markdownData: ConversationSummaryData = {
+      conversation_id: 3,
+      summary_status: 2,
+      summary_result: [
+        {
+          question_name: '客户需求分析',
+          answers: [
+            {
+              content: `# 客户需求总结
+
+## 核心需求
+
+客户主要关注以下几个方面：
+
+1. **产品功能**：需要支持多租户管理
+2. **性能要求**：响应时间需要控制在 100ms 以内
+3. **安全性**：必须通过 ISO 27001 认证
+
+## 技术栈要求
+
+- 前端：React 或 Vue
+- 后端：Node.js 或 Java
+- 数据库：MySQL 或 PostgreSQL
+
+## 关键代码示例
+
+\`\`\`javascript
+// API 调用示例
+const response = await fetch('/api/v1/users', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer token'
+  }
+});
+\`\`\`
+
+## 后续行动
+
+- [ ] 提供详细的技术文档
+- [ ] 安排技术对接会议
+- [ ] 准备演示环境
+
+> **注意**：以上需求需要在下周前确认，以便安排开发资源。
+
+相关链接：[产品文档](https://example.com/docs)`
+            }
+          ]
+        },
+        {
+          question_name: '普通文本示例（非 Markdown）',
+          answers: [
+            {
+              content: `这是一个普通的文本内容，不包含 Markdown 语法特征。
+组件会自动识别这是普通文本，并按照原有的多行文本方式渲染。
+
+支持换行显示，并且会自动转义 HTML 标签，确保安全性。`
+            }
+          ]
+        },
+        {
+          question_name: '混合格式示例',
+          answers: [
+            {
+              content: `## 标题示例
+
+这是一个**粗体文本**和*斜体文本*的示例。
+
+### 列表示例
+
+- 第一项
+- 第二项
+- 第三项
+
+### 代码示例
+
+行内代码：\`console.log('Hello')\`
+
+\`\`\`javascript
+function hello() {
+  console.log('World');
+}
+\`\`\`
+
+### 链接示例
+
+访问 [Megaview 官网](https://megaview.com) 了解更多信息。`
+            }
+          ]
+        }
+      ]
+    };
+
+    setTimeout(() => {
+      const element = document.getElementById(elementId) as any;
+      if (element && element.setData) {
+        element.setData(markdownData);
+      }
+    }, 0);
+
+    return html`
+      <megaview-conversation-summary
+        id=${elementId}
+        style="max-width: 960px; margin: 0 auto;"
+        width=${args.width}
+        height=${args.height}>
+      </megaview-conversation-summary>
+      <div style="margin-top: 16px; padding: 16px; background: #f5f5f5; border-radius: 4px;">
+        <strong>Markdown 支持说明：</strong>
+        <ul style="margin-top: 8px; padding-left: 24px;">
+          <li>组件会自动检测文本是否为 Markdown 格式</li>
+          <li>如果检测到 Markdown 语法特征（标题、列表、代码块等），会自动使用 Markdown 渲染器</li>
+          <li>普通文本会按照原有的多行文本方式渲染，保持向后兼容</li>
+          <li>所有渲染的 HTML 都经过安全清理，防止 XSS 攻击</li>
+        </ul>
+        <p style="margin-top: 8px; color: #666;">
+          <strong>支持的 Markdown 语法：</strong>标题、粗体、斜体、列表、代码块、行内代码、链接、引用、表格、分隔线等
+        </p>
+      </div>
+    `;
+  }
+};
+

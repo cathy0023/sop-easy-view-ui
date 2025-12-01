@@ -1,1 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Megaview UI 本地调试页面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      说明（给第一次使用 Web Components 的同学看）：
+      - 这里不是 examples 目录中的示例项目，而是组件库本身的开发入口页面
+      - 运行 `npm run dev` 后，Vite 会启动一个开发服务器并加载当前 index.html
+      - 我们在这里直接使用自定义元素 <megaview-conversation-summary> 做最简单的预览
+      - 通过 <script type="module"> 引入 src/index.ts，可以在不构建 dist 的情况下直接调试源码
+    -->
+    <style>
+      /* 页面级的简单布局，仅用于本地开发预览，不会影响组件库对外样式 */
+      body {
+        margin: 0;
+        padding: 16px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: #f5f5f7;
+      }
 
+      .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+
+      p {
+        margin: 4px 0 12px;
+        color: #555;
+        font-size: 14px;
+      }
+
+      megaview-conversation-summary {
+        display: block;
+        /* 为了方便本地调试，这里给一个固定高度，你可以根据需要调整 */
+        height: 600px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+        overflow: hidden;
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-container">
+      <h1>Megaview Conversation Summary 本地预览</h1>
+      <p>运行 <code>npm run dev</code> 后打开此页面，即可直接调试组件库源码。</p>
+      <p>
+        如果你只想看业务示例（React/Vue 等），请使用
+        <code>npm run example:vue3</code> / <code>example:react</code> 等命令。
+      </p>
+
+      <!--
+        核心说明：
+        - 这是组件库对外暴露的自定义元素标签名：<megaview-conversation-summary>
+        - 在 React/Vue/原生 HTML 中的用法完全一致
+        - 下面的 script 会在页面加载后给组件注入一份示例数据
+      -->
+      <megaview-conversation-summary id="summary"></megaview-conversation-summary>
+    </div>
+
+    <script type="module">
+      /**
+       * 本地调试入口脚本（仅在 npm run dev 时使用）
+       *
+       * 设计说明：
+       * - 直接从 src/index.ts 导入，这样修改源码可以立即通过 Vite HMR 热更新到浏览器
+       * - src/index.ts 内部会注册自定义元素 <megaview-conversation-summary> 并注入全局样式
+       * - 下面的示例数据只是帮助你快速看到一个有内容的界面，真实使用时由业务侧传入真实数据
+       */
+      import "./src/index.ts";
+
+      // 获取刚才在 HTML 中声明的组件实例
+      const summaryEl = document.getElementById("summary");
+
+      /**
+       * 为了让新手更容易理解，这里准备了一份非常简化的示例数据：
+       * - 真正业务里的字段会更多、更复杂，可以参考 src/components/conversation-summary/types.ts
+       * - 你可以在开发过程中直接修改这份数据，以验证不同结构在 UI 上的呈现效果
+       */
+      const demoData = {
+        summary_result: [
+          {
+            question_name: "客户的核心诉求是什么？",
+            answers: [
+              {
+                content:
+                  "客户希望找到一套可以**自动生成会话纪要**的方案，减少销售填写文档的时间。",
+                context: [
+                  {
+                    begin_time: 30,
+                    speaker_type: "customer",
+                    content: "我们销售现在每次会后都要自己整理纪要，真的很耗时间。",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            question_name: "当前方案中有哪些风险点需要关注？",
+            answers: [
+              {
+                content:
+                  "- 需要与现有 CRM 打通，涉及权限与数据安全\n- 需要评估大模型调用成本与延迟",
+              },
+            ],
+          },
+        ],
+      };
+
+      // 为了兼容类型系统，这里做一次简单的类型守卫与方法存在性检查
+      if (summaryEl && typeof summaryEl["setData"] === "function") {
+        // 使用组件对外暴露的标准 API：setData
+        summaryEl["setData"](demoData);
+      } else {
+        // 如果你在这里看到控制台警告，说明自定义元素还没注册成功或引用 id 写错
+        console.warn(
+          "[MegaviewUI] 未能给 <megaview-conversation-summary> 注入示例数据，请检查：\\n" +
+            "1. 组件是否成功注册（看控制台是否有自定义元素相关错误）\\n" +
+            "2. index.html 中的 id=\"summary\" 是否被修改过"
+        );
+      }
+    </script>
+  </body>
+</html>
