@@ -46,6 +46,12 @@
       overflow-x: auto;
       margin: 10px 0;
     }
+
+    .conversation-summary-wrapper {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 8px;
+    }
   </style>
 </head>
 <body>
@@ -140,6 +146,7 @@
       const component = document.createElement('megaview-conversation-summary');
       component.setAttribute('width', '100%');
       component.setAttribute('height', '500px');
+      component.className = 'conversation-summary-wrapper';
 
       // 使用 JavaScript API 设置数据（推荐）
       component.setData(demoData);

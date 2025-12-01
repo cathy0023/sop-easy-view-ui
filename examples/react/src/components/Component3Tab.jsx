@@ -3,7 +3,7 @@
 const Component3Tab = () => {
   return (
     <div className="component-3-tab">
-      <div className="placeholder">
+      <div className="placeholder component-3-wrapper">
         <h3>组件 3</h3>
         <p>这里将展示第三个组件的示例</p>
         <p className="description">
@@ -15,3 +15,4 @@ const Component3Tab = () => {
 };
 
 export default Component3Tab;
+

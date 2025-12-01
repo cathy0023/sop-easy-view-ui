@@ -8,6 +8,7 @@ import 'megaview-ui';
 // 3. 在 useEffect 中初始化数据和事件监听
 // 4. 提供更新数据功能来演示动态更新能力
 // 5. 使用相同的测试数据结构确保与 Vue3 版本的一致性
+// 6. 通过 ::part() 语法演示对组件内部元素的样式定制
 const ConversationSummaryTab = () => {
   // 会话纪要组件的引用，用于直接操作 Web Components
   const summaryRef = useRef(null);
@@ -138,7 +139,7 @@ const ConversationSummaryTab = () => {
         <button onClick={handleUpdateData}>更新数据</button>
       </div>
 
-      {/* 会话纪要 Web Components */}
+      {/* 会话纪要 Web Components - 通过 ::part() 实现样式定制 */}
       <megaview-conversation-summary
         ref={summaryRef}
         height="600px"
@@ -148,3 +149,4 @@ const ConversationSummaryTab = () => {
 };
 
 export default ConversationSummaryTab;
+

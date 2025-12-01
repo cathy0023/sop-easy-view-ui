@@ -1,6 +1,6 @@
 <template>
   <div class="component-2-tab">
-    <div class="placeholder">
+    <div class="placeholder component-2-wrapper">
       <h3>组件 2</h3>
       <p>这里将展示第二个组件的示例</p>
       <p class="description">
@@ -51,4 +51,11 @@ export default {
   color: #888;
   max-width: 400px;
 }
+
+.component-2-wrapper {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+}
 </style>
+

@@ -7,6 +7,7 @@
     <megaview-conversation-summary
       ref="summaryRef"
       height="600px"
+      class="conversation-summary-wrapper"
     />
   </div>
 </template>
@@ -173,4 +174,11 @@ export default {
 .controls button:hover {
   background-color: #0056b3;
 }
+
+.conversation-summary-wrapper {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+}
 </style>
+

@@ -280,8 +280,8 @@ export default class MegaviewConversationSummary extends LitElement {
     }
 
     return html`
-      <div class="container">
-        <div class="card">
+      <div class="container" part="container">
+        <div class="card" part="card">
           ${repeat(
             questions,
             (item, index) => item.instruction_id ?? `${index}`,
@@ -315,8 +315,8 @@ export default class MegaviewConversationSummary extends LitElement {
    */
   private renderEmptyState(): TemplateResult {
     return html`
-      <div class="container">
-        <div class="card">
+      <div class="container" part="container">
+        <div class="card" part="card">
           <div class="empty">暂无数据</div>
         </div>
       </div>

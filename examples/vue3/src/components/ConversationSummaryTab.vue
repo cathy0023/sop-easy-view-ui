@@ -7,6 +7,7 @@
     <megaview-conversation-summary
       ref="summaryRef"
       height="600px"
+      class="conversation-summary-wrapper"
     />
   </div>
 </template>
@@ -152,5 +153,24 @@ const handleUpdateData = () => {
 .controls button:hover {
   background-color: #0056b3;
 }
+
+.conversation-summary-wrapper {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+
+.conversation-summary-wrapper::part(container) {
+  background: transparent;
+  padding: 0px;
+}
+
+.conversation-summary-wrapper::part(card) {
+  background: transparent;
+  padding: 8px;
+}
+
 </style>
+
 

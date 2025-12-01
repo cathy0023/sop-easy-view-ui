@@ -84,6 +84,7 @@ h1 {
   background-color: #0056b3;
 }
 
+
 /* 占位符组件样式 */
 .component-2-tab,
 .component-3-tab {
@@ -117,6 +118,20 @@ h1 {
   font-size: 14px;
   color: #888;
   max-width: 400px;
+}
+
+.component-2-wrapper,
+.component-3-wrapper {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+/* 会话纪要组件的 ::part() 样式定制演示 */
+.conversation-summary-tab megaview-conversation-summary {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(74, 144, 226, 0.2);
 }
 
 
