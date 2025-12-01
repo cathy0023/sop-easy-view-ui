@@ -1,6 +1,6 @@
 {
   "name": "@megaview/easy-view",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Megaview可视化组件库 - 基于 Web Components",
   "type": "module",
   "main": "./dist/megaview-ui.umd.js",
