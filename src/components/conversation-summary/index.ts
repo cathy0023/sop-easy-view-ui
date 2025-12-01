@@ -97,6 +97,11 @@ export default class MegaviewConversationSummary extends LitElement {
   private _data: ConversationSummaryData | null = null;
 
   /**
+   * 标记是否刚刚通过 setData 更新了数据，用于在渲染完成后滚动到顶部
+   */
+  private _dataJustUpdated: boolean = false;
+
+  /**
    * 组件宽度（默认 100%），会同步到 CSS 变量 `--megaview-conversation-width`
    */
   @property({ type: String, reflect: true })
@@ -160,6 +165,12 @@ export default class MegaviewConversationSummary extends LitElement {
     if (changedProps.has("width") || changedProps.has("height")) {
       this.syncHostDimensions();
     }
+
+    // 如果数据刚刚通过 setData 更新，滚动到顶部
+    if (this._dataJustUpdated) {
+      this._dataJustUpdated = false; // 重置标记
+      this.scrollToTop();
+    }
   }
 
   /**
@@ -184,6 +195,7 @@ export default class MegaviewConversationSummary extends LitElement {
     try {
       if (data === null) {
         this._data = null;
+        this._dataJustUpdated = true; // 标记数据刚刚更新（清空）
         console.log('数据已清空');
         this.requestUpdate();
         return;
@@ -199,6 +211,7 @@ export default class MegaviewConversationSummary extends LitElement {
 
       // 设置数据并触发重新渲染
       this._data = data;
+      this._dataJustUpdated = true; // 标记数据刚刚更新
       this.requestUpdate();
       console.log('数据设置成功');
 
@@ -308,6 +321,20 @@ export default class MegaviewConversationSummary extends LitElement {
     const width = this.width || DEFAULT_DIMENSIONS.width;
     const height = this.height || DEFAULT_DIMENSIONS.height;
     syncHostSizeVariables(this, width, height);
+  }
+
+  /**
+   * 滚动到容器顶部
+   *
+   * 在 setData 更新数据后调用，确保用户看到最新的内容从顶部开始
+   * 使用组件宿主元素作为滚动容器
+   */
+  private scrollToTop(): void {
+    // 使用组件宿主元素作为滚动容器
+    this.scrollTo({
+      top: 0,
+      behavior: 'smooth' // 使用平滑滚动提供更好的用户体验
+    });
   }
 
   /**
